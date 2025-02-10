@@ -32,7 +32,10 @@ const { sharedOptimizationConfig } = require( './webpack-shared-config' );
 
 const ROOT_DIR = path.resolve( __dirname, '../../../../../' );
 const BUILD_DIR = path.resolve( __dirname, '../build/' );
-const cacheDirectory = path.join( ROOT_DIR, 'node_modules/.cache/babel-loader' );
+const cacheDirectory = path.join(
+	ROOT_DIR,
+	'node_modules/.cache/babel-loader'
+);
 const isProduction = NODE_ENV === 'production';
 
 /**
@@ -89,10 +92,8 @@ const getCoreConfig = ( options = {} ) => {
 				return `${ paramCase( chunkData.chunk.name ) }.js`;
 			},
 			path: BUILD_DIR,
-			library: {
-				name: ['wc', '[name]'],
-				type: 'window'
-			},
+			library: [ 'wc', '[name]' ],
+			libraryTarget: 'this',
 			uniqueName: 'webpackWcBlocksCoreJsonp',
 		},
 		module: {
@@ -184,10 +185,8 @@ const getMainConfig = ( options = {} ) => {
 			// @see https://github.com/Automattic/jetpack/pull/20926
 			chunkFilename: `[name].js?ver=[contenthash]`,
 			filename: `[name].js`,
-			library: {
-				name: [ 'wc', 'blocks', '[name]' ],
-				type: 'window',
-			},
+			library: [ 'wc', 'blocks', '[name]' ],
+			libraryTarget: 'this',
 			uniqueName: 'webpackWcBlocksMainJsonp',
 		},
 		module: {
@@ -680,10 +679,8 @@ const getStylingConfig = ( options = {} ) => {
 			devtoolNamespace: 'wc',
 			path: BUILD_DIR,
 			filename: '[name]-style.js',
-			library: {
-				name: [ 'wc', 'blocks', '[name]' ],
-				type: 'window',
-			},
+			library: [ 'wc', 'blocks', '[name]' ],
+			libraryTarget: 'this',
 			uniqueName: 'webpackWcBlocksStylingJsonp',
 		},
 		optimization: {
@@ -835,10 +832,8 @@ const getInteractivityAPIConfig = ( options = {} ) => {
 		output: {
 			filename: '[name].js',
 			path: BUILD_DIR,
-			library: {
-				name: [ 'wc', '__experimentalInteractivity' ],
-				type: 'window',
-			},
+			library: [ 'wc', '__experimentalInteractivity' ],
+			libraryTarget: 'this',
 			chunkLoadingGlobal: 'webpackWcBlocksJsonp',
 		},
 		resolve: {
@@ -932,10 +927,7 @@ const getCartAndCheckoutFrontendConfig = ( options = {} ) => {
 				return `[name]-frontend.js`;
 			},
 			uniqueName: 'webpackWcBlocksCartCheckoutFrontendJsonp',
-			library: {
-				name: ['wc', '[name]'],
-				type: 'window'
-			},
+			library: [ 'wc', '[name]' ],
 		},
 		module: {
 			rules: [
