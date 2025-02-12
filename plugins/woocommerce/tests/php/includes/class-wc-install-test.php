@@ -251,7 +251,7 @@ class WC_Install_Test extends \WC_Unit_Test_Case {
 	 *           [false]
 	 *           [null]
 	 *
-	 * @since 9.7.0
+	 * @since 9.8.0
 	 *
 	 * @param bool|null $auto_update Whether to enable auto-updates (TRUE) or not. NULL doesn't override the defaults.
 	 */
