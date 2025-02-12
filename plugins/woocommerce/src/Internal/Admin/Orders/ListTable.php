@@ -605,7 +605,9 @@ class ListTable extends WP_List_Table {
 	 * @return int
 	 */
 	private function count_orders_by_status( $status ): int {
-		$count = $this->order_aggregate_cache->get_count( $status );
+		$status = (array) $status;
+		$counts = OrderUtil::get_count_for_type( $this->order_type );
+		$count  = array_sum( array_intersect_key( $counts, array_flip( $status ) ) );
 
 		/**
 		 * Allows 3rd parties to modify the count of orders by status.
@@ -617,7 +619,7 @@ class ListTable extends WP_List_Table {
 		return apply_filters(
 			'woocommerce_' . $this->order_type . '_list_table_order_count',
 			$count,
-			(array) $status
+			$status
 		);
 	}
 
