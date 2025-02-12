@@ -1,6 +1,5 @@
 <?php
 
-use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Admin\Notes\Note;
 
 /**
@@ -278,33 +277,6 @@ class WC_Install_Test extends \WC_Unit_Test_Case {
 		} else {
 			$this->assertFalse( $update_scheduled );
 		}
-	}
-
-	/**
-	 * Tests the 'woocommerce_enable_auto_update_db' filter alongside the constant WC_DISABLE_DB_AUTO_UPDATE.
-	 *
-	 * @since 9.7.0
-	 */
-	public function test_db_auto_updates_constant(): void {
-		// Default is auto-updates.
-		$this->assertTrue( \WC_Install::is_db_auto_update_enabled() );
-
-		// Filter can be used to disable this behavior.
-		add_filter( 'woocommerce_enable_auto_update_db', fn() => false );
-		$this->assertFalse( \WC_Install::is_db_auto_update_enabled() );
-		remove_all_filters( 'woocommerce_enable_auto_update_db' );
-
-		// A constant can be used to disable this behavior.
-		Constants::set_constant( 'WC_DISABLE_DB_AUTO_UPDATE', true );
-		$this->assertFalse( \WC_Install::is_db_auto_update_enabled() );
-
-		// Not even the filter can override the constant...
-		add_filter( 'woocommerce_enable_auto_update_db', fn() => true );
-		$this->assertFalse( \WC_Install::is_db_auto_update_enabled() );
-
-		// ... unless the constant is set to `false`.
-		Constants::set_constant( 'WC_DISABLE_DB_AUTO_UPDATE', false );
-		$this->assertTrue( \WC_Install::is_db_auto_update_enabled() );
 	}
 
 }

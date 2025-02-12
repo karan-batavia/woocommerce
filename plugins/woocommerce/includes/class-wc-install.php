@@ -662,8 +662,7 @@ class WC_Install {
 
 	/**
 	 * Is DB auto-update enabled? This controls whether database updates are applied without prompting the admin.
-	 * This is the default behavior since version 9.7.0 and can be overridden via filter
-	 * 'woocommerce_enable_auto_update_db' or by setting the constant WC_DISABLE_DB_AUTO_UPDATE to `true`.
+	 * This is the default behavior since 9.8.0 and can be overridden via filter 'woocommerce_enable_auto_update_db'.
 	 *
 	 * @since 9.7.0
 	 *
@@ -675,9 +674,7 @@ class WC_Install {
 		 *
 		 * @since 3.2.0
 		 */
-		return
-			! Constants::is_true( 'WC_DISABLE_DB_AUTO_UPDATE' )
-			&& (bool) apply_filters( 'woocommerce_enable_auto_update_db', true );
+		return (bool) apply_filters( 'woocommerce_enable_auto_update_db', true );
 	}
 
 	/**
