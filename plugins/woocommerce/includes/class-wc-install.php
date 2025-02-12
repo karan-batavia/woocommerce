@@ -702,7 +702,7 @@ class WC_Install {
 			 */
 			if ( self::is_db_auto_update_enabled() ) {
 				wc_get_logger()->info( 'Automatic database update triggered.', array( 'source' => 'wc-updater' ) );
-				self::update();
+				self::update( true );
 			} else {
 				WC_Admin_Notices::add_notice( 'update', true );
 			}
@@ -741,11 +741,16 @@ class WC_Install {
 
 	/**
 	 * Push all needed DB updates to the queue for processing.
+	 *
+	 * @param bool $schedule_with_delay Whether updates are scheduled to run with a random delay (of up to 15 mins).
 	 */
-	private static function update() {
+	private static function update( bool $schedule_with_delay = false ) {
 		$current_db_version = get_option( 'woocommerce_db_version' );
 		$current_wc_version = WC()->version;
-		$loop               = 0;
+
+		// We add some randomness here prevent overloading servers after an upate has been installed.
+		$scheduled_time = time() + ( $schedule_with_delay ? wp_rand( 1, 15 * MINUTE_IN_SECONDS ) : 0 );
+		$loop           = 0;
 
 		wc_get_logger()->info(
 			sprintf( 'Scheduling database updates (from %s to %s)...', $current_db_version, $current_wc_version ),
@@ -755,7 +760,7 @@ class WC_Install {
 			if ( version_compare( $current_db_version, $version, '<' ) ) {
 				foreach ( $update_callbacks as $update_callback ) {
 					WC()->queue()->schedule_single(
-						time() + $loop,
+						$scheduled_time + $loop,
 						'woocommerce_run_update_callback',
 						array(
 							'update_callback' => $update_callback,
@@ -776,7 +781,7 @@ class WC_Install {
 		if ( version_compare( $current_db_version, $current_wc_version, '<' ) &&
 			! WC()->queue()->get_next( 'woocommerce_update_db_to_current_version' ) ) {
 			WC()->queue()->schedule_single(
-				time() + $loop,
+				$scheduled_time + $loop,
 				'woocommerce_update_db_to_current_version',
 				array(
 					'version' => $current_wc_version,
