@@ -278,5 +278,4 @@ class WC_Install_Test extends \WC_Unit_Test_Case {
 			$this->assertFalse( $update_scheduled );
 		}
 	}
-
 }

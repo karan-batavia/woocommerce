@@ -785,7 +785,7 @@ class WC_Install {
 			);
 		}
 
-		wc_get_logger()->info( 'Database updates scheduled.', array( 'source' => 'wc-updater' )  );
+		wc_get_logger()->info( 'Database updates scheduled.', array( 'source' => 'wc-updater' ) );
 	}
 
 	/**
