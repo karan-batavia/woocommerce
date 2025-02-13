@@ -8,7 +8,6 @@ namespace Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders;
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Caches\OrderCache;
 use Automattic\WooCommerce\Caches\OrderCacheController;
-use Automattic\WooCommerce\Caches\OrderAggregateCache;
 use Automattic\WooCommerce\Caches\OrderAggregateCacheService;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\CLIRunner;
 use Automattic\WooCommerce\Database\Migrations\CustomOrderTable\PostsToOrdersMigrationController;
@@ -45,7 +44,6 @@ class OrdersDataStoreServiceProvider extends AbstractServiceProvider {
 		OrdersTableRefundDataStore::class,
 		OrderCache::class,
 		OrderCacheController::class,
-		OrderAggregateCache::class,
 		OrderAggregateCacheService::class,
 		LegacyDataHandler::class,
 		LegacyDataCleanup::class,
@@ -85,9 +83,8 @@ class OrdersDataStoreServiceProvider extends AbstractServiceProvider {
 			)
 		);
 		$this->share( OrderCache::class );
-		$this->share( OrderAggregateCache::class );
 		$this->share( OrderCacheController::class )->addArgument( OrderCache::class );
-		$this->share( OrderAggregateCacheService::class )->addArgument( OrderAggregateCache::class );
+		$this->share( OrderAggregateCacheService::class )->addArgument();
 		if ( Constants::is_defined( 'WP_CLI' ) && WP_CLI ) {
 			$this->share( CLIRunner::class )->addArguments( array( CustomOrdersTableController::class, DataSynchronizer::class, PostsToOrdersMigrationController::class ) );
 		}

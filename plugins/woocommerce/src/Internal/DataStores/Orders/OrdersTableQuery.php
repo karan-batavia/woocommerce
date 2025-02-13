@@ -7,7 +7,6 @@
 namespace Automattic\WooCommerce\Internal\DataStores\Orders;
 
 use Automattic\WooCommerce\Internal\Utilities\DatabaseUtil;
-use Automattic\WooCommerce\Caches\OrderAggregateCache;
 
 defined( 'ABSPATH' ) || exit;
 

@@ -51,13 +51,6 @@ class ListTable extends WP_List_Table {
 	private $page_controller;
 
 	/**
-	 * The order aggregate cache.
-	 *
-	 * @var OrderAggregateCache
-	 */
-	private $order_aggregate_cache;
-
-	/**
 	 * Tracks whether we're currently inside the trash.
 	 *
 	 * @var boolean
@@ -91,11 +84,9 @@ class ListTable extends WP_List_Table {
 	 *
 	 * @internal This method is not intended to be used directly (except for testing).
 	 * @param PageController      $page_controller Page controller instance for this request.
-	 * @param OrderAggregateCache $order_aggregate_cache Order aggregate cache.
 	 */
-	final public function init( PageController $page_controller, OrderAggregateCache $order_aggregate_cache ) {
-		$this->page_controller       = $page_controller;
-		$this->order_aggregate_cache = $order_aggregate_cache;
+	final public function init( PageController $page_controller ) {
+		$this->page_controller = $page_controller;
 	}
 
 	/**
@@ -432,7 +423,6 @@ class ListTable extends WP_List_Table {
 		$orders      = wc_get_orders( $order_query_args );
 		$this->items = $orders->orders;
 
-		$this->order_aggregate_cache->get_count_by_status( $this->order_query_args['status'] );
 		$max_num_pages = $this->get_max_num_pages( $orders );
 
 		// Check in case the user has attempted to page beyond the available range of orders.
