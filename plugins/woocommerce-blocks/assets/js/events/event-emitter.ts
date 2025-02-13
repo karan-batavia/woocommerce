@@ -43,6 +43,38 @@ export function createEmitter(): EventEmitter {
 		return responses;
 	};
 
+	const notifyListenersWithAbort = async (
+		eventName: string,
+		data: unknown
+	) => {
+		const listenersForEvent =
+			listeners.get( eventName ) || new Set< EventListener >();
+		const clonedListeners = Array.from( listenersForEvent );
+		const responses = [];
+		try {
+			for ( const listener of clonedListeners ) {
+				const observerResponse = await listener( data );
+				if ( isObserverResponse( observerResponse ) ) {
+					responses.push( observerResponse );
+				}
+				if (
+					isErrorResponse( observerResponse ) ||
+					isFailResponse( observerResponse )
+				) {
+					return responses;
+				}
+			}
+		} catch ( e ) {
+			// We don't care about errors blocking execution,
+			// but will console.error for troubleshooting.
+			// eslint-disable-next-line no-console
+			console.error( e );
+			responses.push( { type: 'error' } );
+			return responses;
+		}
+		return responses;
+	};
+
 	return {
 		subscribe( listener, eventName: string ) {
 			let listenersForEvent =
@@ -60,6 +92,10 @@ export function createEmitter(): EventEmitter {
 
 		emit: async ( eventName: string, data: unknown ) => {
 			return await notifyListeners( eventName, data );
+		},
+
+		emitWithAbort: async ( eventName: string, data: unknown ) => {
+			const results = await notifyListenersWithAbort( eventName, data );
 		},
 	};
 }
