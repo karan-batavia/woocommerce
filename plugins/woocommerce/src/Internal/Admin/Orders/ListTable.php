@@ -452,7 +452,7 @@ class ListTable extends WP_List_Table {
 	 * @param WC_Order[]|stdClass Number of pages and an array of order objects.
 	 * @return int
 	 */
-	private function get_max_num_pages( $orders ) {
+	private function get_max_num_pages( &$orders ) {
 		if ( ! $this->order_query_args['no_found_rows'] ) {
 			return $orders->max_num_pages;
 		}
@@ -460,6 +460,7 @@ class ListTable extends WP_List_Table {
 		$order_aggregate_cache = new OrderAggregateCache( $this->order_type );
 		$count                 = $order_aggregate_cache->get_count_by_status( $this->order_query_args['status'] );
 		$limit                 = $this->get_items_per_page( 'edit_' . $this->order_type . '_per_page' );
+		$orders->total         = $count;
 
 		return ceil( $count / $limit );
 	}
