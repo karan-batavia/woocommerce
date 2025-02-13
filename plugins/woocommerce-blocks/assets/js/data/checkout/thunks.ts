@@ -63,7 +63,7 @@ export const __internalProcessCheckoutResponse = (
  */
 export const __internalEmitValidateEvent: emitValidateEventType = ( {
 	observers,
-	setValidationErrors, // TODO: Fix this type after we move to validation store
+	setValidationErrors,
 } ) => {
 	return ( { dispatch, registry }: CheckoutThunkArgs ) => {
 		const { createErrorNotice } = registry.dispatch( noticesStore );
