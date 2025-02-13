@@ -1,15 +1,19 @@
 /**
- * Internal dependencies
+ * External dependencies
  */
+
 import {
-	getObserversByPriority,
+	isObserverResponse,
 	isErrorResponse,
 	isFailResponse,
 	ObserverResponse,
-	responseTypes,
-} from './utils';
+} from '@woocommerce/types';
+
+/**
+ * Internal dependencies
+ */
+import { getObserversByPriority } from './utils';
 import type { EventObserversType } from './types';
-import { isObserverResponse } from '../../../types/type-guards/observers';
 
 /**
  * Emits events on registered observers for the provided type and passes along
@@ -93,7 +97,7 @@ export const emitEventWithAbort = async (
 			// We don't handle thrown errors but just console.log for troubleshooting.
 			// eslint-disable-next-line no-console
 			console.error( e );
-			observerResponses.push( { type: responseTypes.ERROR } );
+			observerResponses.push( { type: 'error' } );
 			return observerResponses;
 		}
 	}
