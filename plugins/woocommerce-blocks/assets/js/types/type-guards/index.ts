@@ -6,6 +6,7 @@ export * from './null';
 export * from './number';
 export * from './empty';
 export * from './object';
+export * from './observers';
 export * from './string';
 export * from './attributes';
 export * from './ratings';
