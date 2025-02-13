@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Caches;
 
+use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
@@ -26,9 +27,21 @@ class OrderAggregateCache {
 	 */
 	private $order_type;
 
+	/**
+	 * Group name.
+	 *
+	 * @var string
+	 */
+	private $group = 'counts';
+
 	public function __construct( $order_type = 'order' ) {
+		$valid_types = wc_get_order_types( 'order-count' );
+		if ( ! in_array( $order_type, $valid_types, true ) ) {
+			throw new \Exception( sprintf( __( '%s is not a valid order type.  Order type must be one of: %s', 'woocommerce' ), $order_type, implode( ',', $valid_types ) ) );
+		}
+
 		$this->order_type = $order_type;
-		$this->cache_key  = \WC_Cache_Helper::get_cache_prefix( 'orders' ) . 'order-count-' . $order_type;
+		$this->cache_key  = 'order-count-' . $order_type;
 	}
 
 	/**
@@ -61,7 +74,7 @@ class OrderAggregateCache {
 	public function get_count() {
 		global $wpdb;
 
-		$count_per_status = wp_cache_get( $this->cache_key, 'counts' );
+		$count_per_status = wp_cache_get( $this->cache_key, $this->group );
 
 		if ( false === $count_per_status ) {
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
@@ -79,14 +92,14 @@ class OrderAggregateCache {
 			} else {
 				$count_per_status = (array) wp_count_posts( $order_type );
 			}
-
+			
 			// Make sure all order statuses are included just in case.
 			$count_per_status = array_merge(
-				array_fill_keys( array_keys( $this->get_valid_statuses() ), 0 ),
+				array_fill_keys( $this->get_valid_statuses(), 0 ),
 				$count_per_status
 			);
 
-			wp_cache_set( $this->cache_key, $count_per_status, 'counts' );
+			wp_cache_set( $this->cache_key, $count_per_status, $this->group );
 		}
 
 		return $count_per_status;
@@ -98,13 +111,15 @@ class OrderAggregateCache {
 	 * @return string[]
 	 */
 	private function get_valid_statuses() {
+		$legacy_statuses = array(
+			OrderStatus::AUTO_DRAFT,
+			OrderStatus::DRAFT,
+			OrderStatus::TRASH,
+		);
+
 		return array_merge(
 			array_keys( wc_get_order_statuses() ),
-			array(
-				'trash',
-				'draft',
-				'auto-draft',
-			)
+			$legacy_statuses
 		);
 	}
 
@@ -125,7 +140,7 @@ class OrderAggregateCache {
 		$count            = $this->get_count();
 		$count[ $status ] = $count;
 
-		wp_cache_set( $this->cache_key, $count, 'counts' );
+		wp_cache_set( $this->cache_key, $count, $this->group );
 	}
 
 	/**
