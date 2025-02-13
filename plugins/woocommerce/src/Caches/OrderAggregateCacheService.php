@@ -18,15 +18,31 @@ class OrderAggregateCacheService {
 	 * @param OrderAggregateCache $order_aggregate_cache The aggregate order cache engine to use.
 	 */
 	final public function init() {
-		add_action( 'woocommerce_new_order', array( $this, 'update_on_new_order' ) );
-		add_action( 'woocommerce_order_status_changed', array( $this, 'update_on_order_status_changed' ), 10, 3 );
+		add_action( 'woocommerce_new_order', array( $this, 'update_on_new_order' ), 10, 2 );
+		add_action( 'woocommerce_before_delete_order', array( $this, 'update_on_delete_order' ), 10, 2 );
+		add_action( 'woocommerce_order_status_changed', array( $this, 'update_on_order_status_changed' ), 10, 4 );
 	}
 
 	/**
 	 * Update the cache when a new order is made.
+	 *
+	 * @param int      $order_id Order id.
+	 * @param WC_Order $order The order.
 	 */
-	public function update_on_new_order() {
-		// Always update if new orders.
+	public function update_on_new_order( $order_id, $order ) {
+		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
+		$order_aggregate_cache->increment_count_for_status( 'wc-' . $order->get_status() );
+	}
+
+	/**
+	 * Update the cache when an order is deleted.
+	 *
+	 * @param int      $order_id Order id.
+	 * @param WC_Order $order The order.
+	 */
+	public function update_on_delete_order( $order_id, $order ) {
+		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
+		$order_aggregate_cache->decrement_count_for_status( $order->get_status() );
 	}
 
 	/**
@@ -39,7 +55,7 @@ class OrderAggregateCacheService {
 	 */
 	public function update_on_order_status_changed( $order_id, $previous_status, $next_status, $order ) {
 		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
-		$this->order_aggregate_cache->decrement_count_for_status( 'wc-' . $previous_status );
-		$this->order_aggregate_cache->increment_count_for_status( 'wc-' . $next_status );
+		$order_aggregate_cache->decrement_count_for_status( 'wc-' . $previous_status );
+		$order_aggregate_cache->increment_count_for_status( 'wc-' . $next_status );
 	}
 }
