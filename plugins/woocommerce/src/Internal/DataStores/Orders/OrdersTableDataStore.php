@@ -1119,6 +1119,7 @@ WHERE
 
 		$orders_table = self::get_orders_table_name();
 
+		// @todo change here.
 		return absint( $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$orders_table} WHERE type = %s AND status = %s", 'shop_order', $status ) ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 

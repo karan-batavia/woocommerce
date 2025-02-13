@@ -34,6 +34,11 @@ class OrderAggregateCache {
 	 */
 	private $group = 'counts';
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $order_type Order type.
+	 */
 	public function __construct( $order_type = 'order' ) {
 		$valid_types = wc_get_order_types( 'order-count' );
 		if ( ! in_array( $order_type, $valid_types, true ) ) {
