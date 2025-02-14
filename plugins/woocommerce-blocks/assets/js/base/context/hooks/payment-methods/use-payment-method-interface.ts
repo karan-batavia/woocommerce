@@ -34,6 +34,14 @@ import { useShippingData } from '../shipping/use-shipping-data';
  * Returns am interface to use as payment method props.
  */
 export const usePaymentMethodInterface = (): PaymentMethodInterface => {
+	// We removed the responseTypes enum to improve the TS types, but it was
+	// included in the payment method interface, so we need to preserve it.
+	const backCompatibleResponseTypes = {
+		SUCCESS: 'success',
+		ERROR: 'error',
+		FAIL: 'failure',
+	};
+
 	const {
 		onCheckoutBeforeProcessing,
 		onCheckoutValidationBeforeProcessing,
@@ -205,7 +213,7 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		},
 		emitResponse: {
 			noticeContexts,
-			responseTypes,
+			responseTypes: backCompatibleResponseTypes,
 		},
 		eventRegistration: {
 			onCheckoutAfterProcessingWithError,
