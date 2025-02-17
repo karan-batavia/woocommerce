@@ -16,6 +16,7 @@ import {
 	paymentStore,
 	CART_STORE_KEY,
 } from '@woocommerce/block-data';
+import { checkoutEvents } from '@woocommerce/blocks-checkout-events';
 import { ValidationInputError } from '@woocommerce/blocks-components';
 
 /**
@@ -50,8 +51,9 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		onSubmit,
 		onCheckoutSuccess,
 		onCheckoutFail,
-		onCheckoutValidation,
 	} = useCheckoutEventsContext();
+
+	const { onCheckoutValidation } = checkoutEvents;
 
 	const { isCalculating, isComplete, isIdle, isProcessing, customerId } =
 		useSelect( ( select ) => {
