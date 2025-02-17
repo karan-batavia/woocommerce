@@ -20,5 +20,6 @@ export const config = {
 
 export const store = createReduxStore( STORE_KEY, config );
 register( store );
+export type CheckoutStoreDescriptor = typeof store;
 
 export const CHECKOUT_STORE_KEY = STORE_KEY;
