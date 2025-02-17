@@ -5,7 +5,7 @@ import { FieldValidationStatus, isObject, objectHasProp } from '../';
 
 type ResponseTypes = 'success' | 'failure' | 'error';
 
-export interface ObserverResponse {
+export interface ObserverResponse extends Record< string, unknown > {
 	type: ResponseTypes;
 	errorMessage?: string;
 	context?: string;

@@ -1,12 +1,16 @@
 /**
  * External dependencies
  */
-import { isString, isObject } from '@woocommerce/types';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import type {
-	PaymentResult,
-	CheckoutResponse,
+import {
+	type PaymentResult,
+	type CheckoutResponse,
+	type ObserverSuccessResponse,
+	type ObserverFailResponse,
+	type ObserverErrorResponse,
+	isString,
+	isObject,
 	isErrorResponse,
 	isFailResponse,
 	isSuccessResponse,
@@ -144,8 +148,11 @@ export const runCheckoutSuccessObservers = ( {
 	dispatch: ActionCreatorsOf< ConfigOf< typeof checkoutStore > >;
 	createErrorNotice: typeof originalCreateErrorNotice;
 } ) => {
-	let successResponse = null as null | Record< string, unknown >;
-	let errorResponse = null as null | Record< string, unknown >;
+	let successResponse = null as null | ObserverSuccessResponse;
+	let errorResponse = null as
+		| null
+		| ObserverErrorResponse
+		| ObserverFailResponse;
 
 	observerResponses.forEach( ( response ) => {
 		if ( isSuccessResponse( response ) ) {
@@ -158,7 +165,7 @@ export const runCheckoutSuccessObservers = ( {
 		}
 	} );
 
-	if ( successResponse && ! errorResponse ) {
+	if ( isSuccessResponse( successResponse ) && ! errorResponse ) {
 		dispatch.__internalSetComplete( successResponse );
 	} else if ( isObject( errorResponse ) ) {
 		if ( errorResponse.message && isString( errorResponse.message ) ) {
