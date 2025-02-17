@@ -46,7 +46,7 @@ class OrderAggregateCache {
 		}
 
 		$this->order_type = $order_type;
-		$this->cache_key  = 'order-count-' . $order_type;
+		$this->cache_key  = \WC_Cache_Helper::get_cache_prefix( 'orders' ) . 'order-count-' . $order_type;
 	}
 
 	/**
@@ -104,7 +104,7 @@ class OrderAggregateCache {
 				$count_per_status
 			);
 
-			wp_cache_set( $this->cache_key, $count_per_status, $this->group );
+			wp_cache_set( $this->cache_key, $count_per_status, $this->group, DAY_IN_SECONDS );
 		}
 
 		return $count_per_status;
@@ -145,7 +145,7 @@ class OrderAggregateCache {
 		$count            = $this->get_count();
 		$count[ $status ] = $count;
 
-		wp_cache_set( $this->cache_key, $count, $this->group );
+		wp_cache_set( $this->cache_key, $count, $this->group, DAY_IN_SECONDS );
 	}
 
 	/**
