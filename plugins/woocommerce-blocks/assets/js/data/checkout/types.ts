@@ -2,7 +2,7 @@
  * External dependencies
  */
 import type { WPNotice } from '@wordpress/notices/build-types/store/selectors';
-import { FieldValidationStatus } from '@woocommerce/types';
+import type { FieldValidationStatus } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -10,7 +10,7 @@ import { FieldValidationStatus } from '@woocommerce/types';
 import type { EventObserversType } from '../../base/context/event-emit/types';
 import type { CheckoutState } from './default-state';
 import type { PaymentState } from '../payment/default-state';
-import { CheckoutThunkArgs } from './thunks';
+import type { CheckoutThunkArgs } from './thunks';
 
 export type CheckoutAfterProcessingWithErrorEventData = {
 	redirectUrl: CheckoutState[ 'redirectUrl' ];
