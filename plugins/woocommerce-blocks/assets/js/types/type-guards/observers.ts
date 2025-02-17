@@ -36,26 +36,26 @@ const isResponseOf = (
 
 export const isSuccessResponse = (
 	response: unknown
-): response is ObserverFailResponse => {
+): response is ObserverSuccessResponse => {
 	return isResponseOf( response, 'success' );
 };
-interface ObserverSuccessResponse extends ObserverResponse {
+export interface ObserverSuccessResponse extends ObserverResponse {
 	type: 'success';
 }
 export const isErrorResponse = (
 	response: unknown
-): response is ObserverSuccessResponse => {
+): response is ObserverErrorResponse => {
 	return isResponseOf( response, 'error' );
 };
-interface ObserverErrorResponse extends ObserverResponse {
+export interface ObserverErrorResponse extends ObserverResponse {
 	type: 'error';
 }
 
-interface ObserverFailResponse extends ObserverResponse {
+export interface ObserverFailResponse extends ObserverResponse {
 	type: 'failure';
 }
 export const isFailResponse = (
 	response: unknown
-): response is ObserverErrorResponse => {
+): response is ObserverFailResponse => {
 	return isResponseOf( response, 'failure' );
 };
