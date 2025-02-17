@@ -3,10 +3,11 @@
  */
 
 import {
-	isObserverResponse,
 	isErrorResponse,
 	isFailResponse,
-	ObserverResponse,
+	isObserverResponse,
+	type ObserverResponse,
+	responseTypes,
 } from '@woocommerce/types';
 
 /**
@@ -97,7 +98,7 @@ export const emitEventWithAbort = async (
 			// We don't handle thrown errors but just console.log for troubleshooting.
 			// eslint-disable-next-line no-console
 			console.error( e );
-			observerResponses.push( { type: 'error' } );
+			observerResponses.push( { type: responseTypes.ERROR } );
 			return observerResponses;
 		}
 	}
