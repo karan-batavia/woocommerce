@@ -161,14 +161,15 @@ There are a bunch of utility methods that can be used related to events. These a
 
 ```jsx
 import {
-	isSuccessResponse,
-	isErrorResponse,
-	isFailResponse,
-	noticeContexts,
-	responseTypes,
-	shouldRetry,
+  noticeContexts,
+  responseTypes,
+  shouldRetry,
 } from '@woocommerce/base-context';
-};
+import {
+  isSuccessResponse,
+  isErrorResponse,
+  isFailResponse,
+} from '@woocommerce/types';
 ```
 
 The helper functions are described below:
