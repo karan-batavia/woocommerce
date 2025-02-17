@@ -96,6 +96,10 @@ export const __internalEmitValidateEvent: emitValidateEventType = ( {
 						context = 'wc/checkout',
 					} ) => {
 						if (
+							// TODO: for a more consistent experience across observing events we should normalize the
+							// return values. For example this one expects `errorMessage` whereas `onCheckoutFail`
+							// expects `message`. It would be good to ensure all observer responses are the same shape
+							// otherwise this leads to confusion when typing internally, and confusion for the consumer.
 							typeof errorMessage === 'string' &&
 							errorMessage
 						) {
