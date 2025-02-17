@@ -457,10 +457,9 @@ class ListTable extends WP_List_Table {
 			return $orders->max_num_pages;
 		}
 
-		$order_count_cache = new OrderCountCache( $this->order_type );
-		$count             = $order_count_cache->get_count_by_status( $this->order_query_args['status'] );
-		$limit             = $this->get_items_per_page( 'edit_' . $this->order_type . '_per_page' );
-		$orders->total     = $count;
+		$count         = $this->count_orders_by_status( $this->order_query_args['status'] );
+		$limit         = $this->get_items_per_page( 'edit_' . $this->order_type . '_per_page' );
+		$orders->total = $count;
 
 		return ceil( $count / $limit );
 	}

@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\Caches;
 
+use Automattic\WooCommerce\Caching\ObjectCache;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Utilities\OrderUtil;
@@ -11,7 +12,15 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 /**
  * A class to cache counts for various order statuses.
  */
-class OrderCountCache {
+class OrderCountCache extends ObjectCache {
+
+	/**
+	 * Default value for the duration of the objects in the cache, in seconds
+	 * (may not be used depending on the cache engine used WordPress cache implementation).
+	 *
+	 * @var int
+	 */
+	protected $default_expiration = DAY_IN_SECONDS;
 
 	/**
 	 * Cache key.
@@ -21,93 +30,39 @@ class OrderCountCache {
 	private $cache_key;
 
 	/**
-	 * Order type.
+	 * Get the cache key and prefix to use for Orders.
 	 *
-	 * @var string
+	 * @return string
 	 */
-	private $order_type;
-
-	/**
-	 * Group name.
-	 *
-	 * @var string
-	 */
-	private $group = 'counts';
-
-	/**
-	 * Constructor.
-	 *
-	 * @param string $order_type Order type.
-	 */
-	public function __construct( $order_type = 'order' ) {
-		$valid_types = wc_get_order_types( 'order-count' );
-		if ( ! in_array( $order_type, $valid_types, true ) ) {
-			throw new \Exception( sprintf( __( '%s is not a valid order type.  Order type must be one of: %s', 'woocommerce' ), $order_type, implode( ',', $valid_types ) ) );
-		}
-
-		$this->order_type = $order_type;
-		$this->cache_key  = \WC_Cache_Helper::get_cache_prefix( 'orders' ) . 'order-count-' . $order_type;
+	public function get_object_type(): string {
+		return 'order-count';
 	}
 
 	/**
-	 * Get the aggregate by identifier.
+	 * Get the id of an object to be cached.
 	 *
-	 * @param string|string[] $status The order status to count.
-	 * @return int
-	 * @throws \Exception Exception thrown if status it not valid.
+	 * @param array|object $object The object to be cached.
+	 * @return int|string|null The id of the object, or null if it can't be determined.
 	 */
-	public function get_count_by_status( $status ): int {
-		$status         = (array) $status;
-		$valid_statuses = $this->get_valid_statuses();
-
-		if ( ! empty( array_diff( $status, $valid_statuses ) ) ) {
-			throw new \Exception( sprintf( __( '%s is not a valid %s status.', 'woocommerce' ), implode( ', ', $status ), $this->order_type ) );
-		}
-
-		$count = $this->get_count();
-
-		return array_sum( array_intersect_key( $count, array_flip( $status ) ) );
+	protected function get_object_id( $object ) {
+		return null;
 	}
 
 	/**
-	 * Counts number of orders of a given type.
+	 * Validate an object before caching it.
 	 *
-	 * @since 8.7.0
-	 *
-	 * @return array<string,int> Array of order counts indexed by order type.
+	 * @param array|object $object The object to validate.
+	 * @return string[]|null An array of error messages, or null if the object is valid.
 	 */
-	public function get_count() {
-		global $wpdb;
+	protected function validate( $array ): ?array {
+		$valid_statuses   = $this->get_valid_statuses();
+		$invalid_statuses = array_diff( array_keys( $array ), $valid_statuses );
 
-		$count_per_status = wp_cache_get( $this->cache_key, $this->group );
-
-		if ( false === $count_per_status ) {
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-				$results = $wpdb->get_results(
-					$wpdb->prepare(
-						'SELECT `status`, COUNT(*) AS `count` FROM ' . OrderUtil::get_table_for_orders() . ' WHERE `type` = %s GROUP BY `status`',
-						$this->order_type
-					),
-					ARRAY_A
-				);
-				// phpcs:enable
-
-				$count_per_status = array_map( 'absint', array_column( $results, 'count', 'status' ) );
-			} else {
-				$count_per_status = (array) wp_count_posts( $order_type );
-			}
-			
-			// Make sure all order statuses are included just in case.
-			$count_per_status = array_merge(
-				array_fill_keys( $this->get_valid_statuses(), 0 ),
-				$count_per_status
-			);
-
-			wp_cache_set( $this->cache_key, $count_per_status, $this->group, DAY_IN_SECONDS );
+		if ( ! empty( $invalid_statuses ) ) {
+			return array( sprintf( __( '%s is not one of: %s', 'woocommerce' ), implode( ',', $invalid_statuses ), implode( ', ', $valid_statuses ) ) );
 		}
 
-		return $count_per_status;
+		return null;
 	}
 
 	/**
@@ -126,47 +81,5 @@ class OrderCountCache {
 			array_keys( wc_get_order_statuses() ),
 			$legacy_statuses
 		);
-	}
-
-	/**
-	 * Update the visible order count cache.
-	 *
-	 * @param integer $count The count of which to update with.
-	 * @param string  $status The identifier of the aggregate.
-	 * @return void
-	 */
-	public function set_count_for_status( $count, $status ): void {
-		$valid_statuses = $this->get_valid_statuses();
-
-		if ( ! in_array( $status, $valid_statuses ) ) {
-			throw new \Exception( sprintf( __( '%s is not a valid %s status.', 'woocommerce' ), implode( ', ', $status ), $this->order_type ) );
-		}
-
-		$count            = $this->get_count();
-		$count[ $status ] = $count;
-
-		wp_cache_set( $this->cache_key, $count, $this->group, DAY_IN_SECONDS );
-	}
-
-	/**
-	 * Increment a count by 1 for a given status.
-	 *
-	 * @param string  $status The identifier of the aggregate.
-	 * @return void
-	 */
-	public function increment_count_for_status( $status ) {
-		$count = $this->get_count_by_status( $status );
-		$this->set_count_for_status( $count + 1, $status );
-	}
-
-	/**
-	 * Increment a count by 1 for a given status.
-	 *
-	 * @param string  $status The identifier of the aggregate.
-	 * @return void
-	 */
-	public function decrement_count_for_status( $status ) {
-		$count = $this->get_count_by_status( $status );
-		$this->set_count_for_status( $count - 1, $status );
 	}
 }

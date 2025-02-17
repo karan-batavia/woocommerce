@@ -400,8 +400,9 @@ function wc_orders_count( $status, string $type = '' ) {
 		$types_for_count = $type ? array( $type ) : $valid_types;
 
 		foreach ( $types_for_count as $type ) {
-			$order_count_cache = new OrderCountCache( $type );
-			$count            += $order_count_cache->get_count_by_status( $status );
+			$order_count_cache = new OrderCountCache();
+			$count_for_type    = OrderUtil::get_count_for_type( $type );
+			$count            += $count_for_type[ $status ];
 		}
 
 		return $count;

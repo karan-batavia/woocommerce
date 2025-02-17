@@ -5,6 +5,7 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Caches;
 
 use WC_Order;
+use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
  * A service class to help with updates to the aggregate orders cache.
@@ -30,8 +31,10 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_new_order( $order_id, $order ) {
-		$order_count_cache = new OrderCountCache( $order->get_type() );
-		$order_count_cache->increment_count_for_status( 'wc-' . $order->get_status() );
+		$order_count_cache               = new OrderCountCache();
+		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
+		$counts[ 'wc-' . $order->get_status() ] += 1;
+		$order_count_cache->set( $order->get_type(), $counts );
 	}
 
 	/**
@@ -41,8 +44,10 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_delete_order( $order_id, $order ) {
-		$order_count_cache = new OrderCountCache( $order->get_type() );
-		$order_count_cache->decrement_count_for_status( $order->get_status() );
+		$order_count_cache               = new OrderCountCache();
+		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
+		$counts[ $order->get_status() ] -= 1;
+		$order_count_cache->set( $order->get_type(), $counts );
 	}
 
 	/**
@@ -54,8 +59,10 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_order_status_changed( $order_id, $previous_status, $next_status, $order ) {
-		$order_count_cache = new OrderCountCache( $order->get_type() );
-		$order_count_cache->decrement_count_for_status( 'wc-' . $previous_status );
-		$order_count_cache->increment_count_for_status( 'wc-' . $next_status );
+		$order_count_cache                   = new OrderCountCache();
+		$counts                              = OrderUtil::get_count_for_type( $order->get_type() );
+		$counts[ 'wc-' . $previous_status ] -= 1;
+		$counts[ 'wc-' . $next_status ]     += 1;
+		$order_count_cache->set( $order->get_type(), $counts );
 	}
 }
