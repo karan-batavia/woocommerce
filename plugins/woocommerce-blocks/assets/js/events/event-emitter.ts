@@ -13,6 +13,10 @@ export interface EventEmitter {
 		eventName: string,
 		data?: unknown
 	) => Promise< ObserverResponse[] >;
+	emitWithAbort: (
+		eventName: string,
+		data?: unknown
+	) => Promise< ObserverResponse[] >;
 	subscribe: (
 		listener: EventListener,
 		priority: number,
