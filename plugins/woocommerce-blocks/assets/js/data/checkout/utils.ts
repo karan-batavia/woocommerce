@@ -41,16 +41,28 @@ export const handleErrorResponse = ( {
 	let errorResponse = null;
 	observerResponses.forEach( ( response ) => {
 		if ( isErrorResponse( response ) || isFailResponse( response ) ) {
+			// @ts-expect-error The `message` prop is untyped on ObserverFailResponse and ObserverErrorResponse, however
+			// we should update the observers so they use standardised responses, e.g. they all use `message` or `errorMessage`
+			// rather than a mix of both.
 			if ( response.message && isString( response.message ) ) {
 				const errorOptions =
+					// @ts-expect-error The `messageContext` prop is untyped on ObserverFailResponse and ObserverErrorResponse, however
+					// it should be fixed in a followup PR. Too much scope to change it in this PR.
 					response.messageContext &&
+					// @ts-expect-error The `messageContext` prop is untyped on ObserverFailResponse and ObserverErrorResponse, however
+					// it should be fixed in a followup PR. Too much scope to change it in this PR.
 					isString( response.messageContext )
 						? // The `as string` is OK here because of the type guard above.
 						  {
+								// @ts-expect-error The `messageContext` prop is untyped on ObserverFailResponse and ObserverErrorResponse, however
+								// it should be fixed in a followup PR. Too much scope to change it in this PR.
 								context: response.messageContext as string,
 						  }
 						: undefined;
 				errorResponse = response;
+				// @ts-expect-error The `message` prop is untyped on ObserverFailResponse and ObserverErrorResponse, however
+				// we should update the observers so they use standardised responses, e.g. they all use `message` or `errorMessage`
+				// rather than a mix of both.
 				createErrorNotice( response.message, errorOptions );
 			}
 		}
