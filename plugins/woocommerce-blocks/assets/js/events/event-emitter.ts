@@ -69,7 +69,7 @@ export function createEmitter(): EventEmitter {
 		const clonedListenersByPriority = Array.from( listenersForEvent )
 			.sort( ( a, b ) => a.priority - b.priority )
 			.map( ( { listener } ) => listener );
-		const responses = [];
+		const responses: ObserverResponse[] = [];
 		try {
 			for ( const listener of clonedListenersByPriority ) {
 				const observerResponse = await listener( data );
