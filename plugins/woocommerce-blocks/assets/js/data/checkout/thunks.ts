@@ -121,7 +121,7 @@ export const __internalEmitValidateEvent: emitValidateEventType = ( {
  * to the observer responses
  */
 export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType =
-	( { observers, notices } ) => {
+	( { notices } ) => {
 		return ( { select, dispatch, registry } ) => {
 			const { createErrorNotice } = registry.dispatch( noticesStore );
 			const data = {
@@ -134,31 +134,27 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 			if ( select.hasError() ) {
 				// allow payment methods or other things to customize the error
 				// with a fallback if nothing customizes it.
-				emitEventWithAbort(
-					observers,
-					EVENTS.CHECKOUT_FAIL,
-					data
-				).then( ( observerResponses ) => {
-					runCheckoutFailObservers( {
-						observerResponses,
-						notices,
-						dispatch,
-						createErrorNotice,
-						data,
+				checkoutEventsEmitter
+					.emitWithAbort( CHECKOUT_EVENTS.CHECKOUT_FAIL, data )
+					.then( ( observerResponses ) => {
+						runCheckoutFailObservers( {
+							observerResponses,
+							notices,
+							dispatch,
+							createErrorNotice,
+							data,
+						} );
 					} );
-				} );
 			} else {
-				emitEventWithAbort(
-					observers,
-					EVENTS.CHECKOUT_SUCCESS,
-					data
-				).then( ( observerResponses: unknown[] ) => {
-					runCheckoutSuccessObservers( {
-						observerResponses,
-						dispatch,
-						createErrorNotice,
+				checkoutEventsEmitter
+					.emitWithAbort( CHECKOUT_EVENTS.CHECKOUT_SUCCESS, data )
+					.then( ( observerResponses: unknown[] ) => {
+						runCheckoutSuccessObservers( {
+							observerResponses,
+							dispatch,
+							createErrorNotice,
+						} );
 					} );
-				} );
 			}
 		};
 	};
