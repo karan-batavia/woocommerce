@@ -99,14 +99,16 @@ export function createEmitter(): EventEmitter {
 			let listenersForEvent =
 				listeners.get( eventName ) ||
 				new Set< EventListenerWithPriority >();
-			listenersForEvent.add( { listener, priority } );
+			// Keep listenerObject here so it can be used to delete the entry from the Set later.
+			const listenerObject = { listener, priority };
+			listenersForEvent.add( listenerObject );
 			listeners.set( eventName, listenersForEvent );
 			return () => {
 				// Re-get the listeners for the event in case the list was updated before unsubscribe was called.
 				listenersForEvent =
 					listeners.get( eventName ) ||
 					new Set< EventListenerWithPriority >();
-				listenersForEvent.delete( { listener, priority } );
+				listenersForEvent.delete( listenerObject );
 				listeners.set( eventName, listenersForEvent );
 			};
 		},
