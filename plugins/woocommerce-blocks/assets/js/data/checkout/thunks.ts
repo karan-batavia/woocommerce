@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import type { CheckoutResponse } from '@woocommerce/types';
+import {
+	isObject,
+	type CheckoutResponse,
+	isSuccessResponse,
+} from '@woocommerce/types';
 import { store as noticesStore } from '@wordpress/notices';
 import { dispatch as wpDispatch, select as wpSelect } from '@wordpress/data';
 import type {
@@ -11,12 +15,16 @@ import type {
 	DispatchFunction,
 	SelectFunction,
 } from '@wordpress/data/build-types/types';
-import { checkoutStore } from '@woocommerce/block-data';
+import {
+	CHECKOUT_EVENTS,
+	checkoutEventsEmitter,
+} from '@woocommerce/blocks-checkout-events';
 
 /**
  * Internal dependencies
  */
 import { store as paymentStore } from '../payment';
+import type { CheckoutStoreDescriptor } from './index';
 import { removeNoticesByStatus } from '../../utils/notices';
 import {
 	getPaymentResultFromCheckoutResponse,
@@ -25,7 +33,6 @@ import {
 } from './utils';
 import {
 	EVENTS,
-	emitEvent,
 	emitEventWithAbort,
 } from '../../base/context/providers/cart-checkout/checkout-events/event-emit';
 import type {
@@ -67,28 +74,44 @@ export const __internalEmitValidateEvent: emitValidateEventType = ( {
 	return ( { dispatch, registry }: CheckoutThunkArgs ) => {
 		const { createErrorNotice } = registry.dispatch( noticesStore );
 		removeNoticesByStatus( 'error' );
-		emitEvent( observers, EVENTS.CHECKOUT_VALIDATION, {} ).then(
-			( response ) => {
-				if ( response !== true ) {
-					if ( Array.isArray( response ) ) {
-						response.forEach(
-							( {
-								errorMessage,
-								validationErrors,
-								context = 'wc/checkout',
-							} ) => {
-								createErrorNotice( errorMessage, { context } );
-								setValidationErrors( validationErrors );
-							}
-						);
-					}
-					dispatch.__internalSetIdle();
-					dispatch.__internalSetHasError();
-				} else {
+		checkoutEventsEmitter
+			.emit( CHECKOUT_EVENTS.CHECKOUT_VALIDATION )
+			.then( ( responses ) => {
+				// If responses length is 0, then no observer returned a response that wasn't `true` or void, therefore,
+				// we can assume all observers passed and continue to processing. We also need to check if all responses
+				// are of type `success`, so we can skip adding any errors too.
+				if (
+					responses.length === 0 ||
+					responses.every( isSuccessResponse )
+				) {
 					dispatch.__internalSetProcessing();
+					return;
 				}
-			}
-		);
+				// If any observer returned a response, by this point we know that it's either failure or error due to
+				// the checks above.
+				responses.forEach(
+					( {
+						errorMessage,
+						validationErrors,
+						context = 'wc/checkout',
+					} ) => {
+						if (
+							typeof errorMessage === 'string' &&
+							errorMessage
+						) {
+							createErrorNotice( errorMessage, { context } );
+						}
+						if (
+							isObject( validationErrors ) &&
+							Object.entries( validationErrors ).length >= 0
+						) {
+							setValidationErrors( validationErrors );
+						}
+					}
+				);
+				dispatch.__internalSetIdle();
+				dispatch.__internalSetHasError();
+			} );
 	};
 };
 
