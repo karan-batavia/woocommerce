@@ -4,7 +4,13 @@
 import { isString, isObject } from '@woocommerce/types';
 import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
-import type { PaymentResult, CheckoutResponse } from '@woocommerce/types';
+import type {
+	PaymentResult,
+	CheckoutResponse,
+	isErrorResponse,
+	isFailResponse,
+	isSuccessResponse,
+} from '@woocommerce/types';
 import type { createErrorNotice as originalCreateErrorNotice } from '@wordpress/notices/store/actions';
 import {
 	type ActionCreatorsOf,
@@ -15,12 +21,7 @@ import { checkoutStore } from '@woocommerce/block-data';
 /**
  * Internal dependencies
  */
-import {
-	isErrorResponse,
-	isFailResponse,
-	isSuccessResponse,
-	shouldRetry,
-} from '../../base/context/event-emit';
+import { shouldRetry } from '../../base/context/event-emit';
 import {
 	CheckoutAndPaymentNotices,
 	CheckoutAfterProcessingWithErrorEventData,
