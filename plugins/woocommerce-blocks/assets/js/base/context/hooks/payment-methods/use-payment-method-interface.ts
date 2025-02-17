@@ -49,11 +49,10 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		onCheckoutAfterProcessingWithSuccess,
 		onCheckoutAfterProcessingWithError,
 		onSubmit,
-		onCheckoutSuccess,
-		onCheckoutFail,
 	} = useCheckoutEventsContext();
 
-	const { onCheckoutValidation } = checkoutEvents;
+	const { onCheckoutValidation, onCheckoutSuccess, onCheckoutFail } =
+		checkoutEvents;
 
 	const { isCalculating, isComplete, isIdle, isProcessing, customerId } =
 		useSelect( ( select ) => {
