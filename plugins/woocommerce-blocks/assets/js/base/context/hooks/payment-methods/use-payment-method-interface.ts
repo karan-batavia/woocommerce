@@ -23,7 +23,7 @@ import { ValidationInputError } from '@woocommerce/blocks-components';
  */
 import { useStoreCart } from '../cart/use-store-cart';
 import { useStoreCartCoupons } from '../cart/use-store-cart-coupons';
-import { noticeContexts, responseTypes } from '../../event-emit';
+import { noticeContexts } from '../../event-emit';
 import { useCheckoutEventsContext } from '../../providers/cart-checkout/checkout-events';
 import { usePaymentEventsContext } from '../../providers/cart-checkout/payment-events';
 import { useShippingDataContext } from '../../providers/cart-checkout/shipping';
