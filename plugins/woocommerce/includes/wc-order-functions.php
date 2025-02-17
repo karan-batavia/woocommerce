@@ -387,10 +387,14 @@ function wc_processing_order_count() {
  * @return int
  */
 function wc_orders_count( $status, string $type = '' ) {
-	$count       = 0;
-	$status      = ( ! in_array( $status, $legacy_statuses, true ) && 0 !== strpos( $status, 'wc-' ) ) ? 'wc-' . $status : $status;
-	$valid_types = wc_get_order_types( 'order-count' );
-	$type        = trim( $type );
+	$count           = 0;
+	$legacy_statuses = array(
+		OrderStatus::DRAFT,
+		OrderStatus::TRASH,
+	);
+	$status          = ( ! in_array( $status, $legacy_statuses, true ) && 0 !== strpos( $status, 'wc-' ) ) ? 'wc-' . $status : $status;
+	$valid_types     = wc_get_order_types( 'order-count' );
+	$type            = trim( $type );
 
 	try {
 		$types_for_count = $type ? array( $type ) : $valid_types;
