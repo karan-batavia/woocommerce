@@ -34,8 +34,8 @@ import type {
 } from './types';
 
 export interface CheckoutThunkArgs {
-	select?: CurriedSelectorsOf< typeof checkoutStore >;
-	dispatch: ActionCreatorsOf< ConfigOf< typeof checkoutStore > >;
+	select: CurriedSelectorsOf< CheckoutStoreDescriptor >;
+	dispatch: ActionCreatorsOf< ConfigOf< CheckoutStoreDescriptor > >;
 	registry: { dispatch: DispatchFunction; select: SelectFunction };
 }
 
