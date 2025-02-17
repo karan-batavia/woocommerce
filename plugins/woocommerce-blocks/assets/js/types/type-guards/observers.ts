@@ -3,10 +3,14 @@
  */
 import { FieldValidationStatus, isObject, objectHasProp } from '../';
 
-type ResponseTypes = 'success' | 'failure' | 'error';
+export enum responseTypes {
+	SUCCESS = 'success',
+	FAIL = 'failure',
+	ERROR = 'error',
+}
 
 export interface ObserverResponse extends Record< string, unknown > {
-	type: ResponseTypes;
+	type: responseTypes;
 	errorMessage?: string;
 	context?: string;
 	meta?: Record< string, unknown >;
@@ -23,13 +27,13 @@ export const isObserverResponse = (
 };
 
 export interface ResponseType extends Record< string, unknown > {
-	type: ResponseTypes;
+	type: responseTypes;
 	retry?: boolean;
 }
 
 const isResponseOf = (
 	response: unknown,
-	type: string extends ResponseTypes ? never : ResponseTypes
+	type: string extends responseTypes ? never : responseTypes
 ): response is ResponseType => {
 	return isObject( response ) && 'type' in response && response.type === type;
 };
@@ -37,25 +41,25 @@ const isResponseOf = (
 export const isSuccessResponse = (
 	response: unknown
 ): response is ObserverSuccessResponse => {
-	return isResponseOf( response, 'success' );
+	return isResponseOf( response, responseTypes.SUCCESS );
 };
 export interface ObserverSuccessResponse extends ObserverResponse {
-	type: 'success';
+	type: responseTypes.SUCCESS;
 }
 export const isErrorResponse = (
 	response: unknown
 ): response is ObserverErrorResponse => {
-	return isResponseOf( response, 'error' );
+	return isResponseOf( response, responseTypes.ERROR );
 };
 export interface ObserverErrorResponse extends ObserverResponse {
-	type: 'error';
+	type: responseTypes.ERROR;
 }
 
 export interface ObserverFailResponse extends ObserverResponse {
-	type: 'failure';
+	type: responseTypes.FAIL;
 }
 export const isFailResponse = (
 	response: unknown
 ): response is ObserverFailResponse => {
-	return isResponseOf( response, 'failure' );
+	return isResponseOf( response, responseTypes.FAIL );
 };

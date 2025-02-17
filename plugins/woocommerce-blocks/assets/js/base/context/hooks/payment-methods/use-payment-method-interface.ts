@@ -9,7 +9,7 @@ import PaymentMethodIcons from '@woocommerce/base-components/cart-checkout/payme
 import { getSetting } from '@woocommerce/settings';
 import deprecated from '@wordpress/deprecated';
 import LoadingMask from '@woocommerce/base-components/loading-mask';
-import type { PaymentMethodInterface } from '@woocommerce/types';
+import { type PaymentMethodInterface, responseTypes } from '@woocommerce/types';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	checkoutStore,
@@ -35,14 +35,6 @@ import { useShippingData } from '../shipping/use-shipping-data';
  * Returns am interface to use as payment method props.
  */
 export const usePaymentMethodInterface = (): PaymentMethodInterface => {
-	// We removed the responseTypes enum to improve the TS types, but it was
-	// included in the payment method interface, so we need to preserve it.
-	const backCompatibleResponseTypes = {
-		SUCCESS: 'success',
-		ERROR: 'error',
-		FAIL: 'failure',
-	};
-
 	const {
 		onCheckoutBeforeProcessing,
 		onCheckoutValidationBeforeProcessing,
@@ -214,7 +206,7 @@ export const usePaymentMethodInterface = (): PaymentMethodInterface => {
 		},
 		emitResponse: {
 			noticeContexts,
-			responseTypes: backCompatibleResponseTypes,
+			responseTypes,
 		},
 		eventRegistration: {
 			onCheckoutAfterProcessingWithError,
