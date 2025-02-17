@@ -8,7 +8,7 @@
  * @version 3.4.0
  */
 
-use Automattic\WooCommerce\Caches\OrderAggregateCache;
+use Automattic\WooCommerce\Caches\OrderCountCache;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Enums\OrderInternalStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer;
@@ -400,8 +400,8 @@ function wc_orders_count( $status, string $type = '' ) {
 		$types_for_count = $type ? array( $type ) : $valid_types;
 
 		foreach ( $types_for_count as $type ) {
-			$order_aggregate_cache = new OrderAggregateCache( $type );
-			$count                += $order_aggregate_cache->get_count_by_status( $status );
+			$order_count_cache = new OrderCountCache( $type );
+			$count            += $order_count_cache->get_count_by_status( $status );
 		}
 
 		return $count;

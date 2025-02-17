@@ -9,13 +9,13 @@ use WC_Order;
 /**
  * A service class to help with updates to the aggregate orders cache.
  */
-class OrderAggregateCacheService {
+class OrderCountCacheService {
 
 	/**
 	 * Class initialization, invoked by the DI container.
 	 *
 	 * @internal
-	 * @param OrderAggregateCache $order_aggregate_cache The aggregate order cache engine to use.
+	 * @param OrderCountCache $order_count_cache The aggregate order cache engine to use.
 	 */
 	final public function init() {
 		add_action( 'woocommerce_new_order', array( $this, 'update_on_new_order' ), 10, 2 );
@@ -30,8 +30,8 @@ class OrderAggregateCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_new_order( $order_id, $order ) {
-		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
-		$order_aggregate_cache->increment_count_for_status( 'wc-' . $order->get_status() );
+		$order_count_cache = new OrderCountCache( $order->get_type() );
+		$order_count_cache->increment_count_for_status( 'wc-' . $order->get_status() );
 	}
 
 	/**
@@ -41,8 +41,8 @@ class OrderAggregateCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_delete_order( $order_id, $order ) {
-		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
-		$order_aggregate_cache->decrement_count_for_status( $order->get_status() );
+		$order_count_cache = new OrderCountCache( $order->get_type() );
+		$order_count_cache->decrement_count_for_status( $order->get_status() );
 	}
 
 	/**
@@ -54,8 +54,8 @@ class OrderAggregateCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_order_status_changed( $order_id, $previous_status, $next_status, $order ) {
-		$order_aggregate_cache = new OrderAggregateCache( $order->get_type() );
-		$order_aggregate_cache->decrement_count_for_status( 'wc-' . $previous_status );
-		$order_aggregate_cache->increment_count_for_status( 'wc-' . $next_status );
+		$order_count_cache = new OrderCountCache( $order->get_type() );
+		$order_count_cache->decrement_count_for_status( 'wc-' . $previous_status );
+		$order_count_cache->increment_count_for_status( 'wc-' . $next_status );
 	}
 }

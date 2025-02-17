@@ -9,9 +9,9 @@ use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
 /**
- * A class to cache aggregates from orders.
+ * A class to cache counts for various order statuses.
  */
-class OrderAggregateCache {
+class OrderCountCache {
 
 	/**
 	 * Cache key.

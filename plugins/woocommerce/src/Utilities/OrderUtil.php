@@ -6,7 +6,7 @@
 namespace Automattic\WooCommerce\Utilities;
 
 use Automattic\WooCommerce\Caches\OrderCacheController;
-use Automattic\WooCommerce\Caches\OrderAggregateCache;
+use Automattic\WooCommerce\Caches\OrderCountCache;
 use Automattic\WooCommerce\Internal\Admin\Orders\PageController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\Utilities\COTMigrationUtil;
@@ -204,8 +204,8 @@ final class OrderUtil {
 	 * @return array<string,int> Array of order counts indexed by order type.
 	 */
 	public static function get_count_for_type( $order_type ) {
-		$order_aggregate_cache = new OrderAggregateCache( $order_type );
-		return $order_aggregate_cache->get_count();
+		$order_count_cache = new OrderCountCache( $order_type );
+		return $order_count_cache->get_count();
 	}
 
 	/**

@@ -4,7 +4,7 @@ namespace Automattic\WooCommerce\Internal\Admin\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
-use Automattic\WooCommerce\Caches\OrderAggregateCache;
+use Automattic\WooCommerce\Caches\OrderCountCache;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use WC_Order;
 use WP_List_Table;
@@ -457,10 +457,10 @@ class ListTable extends WP_List_Table {
 			return $orders->max_num_pages;
 		}
 
-		$order_aggregate_cache = new OrderAggregateCache( $this->order_type );
-		$count                 = $order_aggregate_cache->get_count_by_status( $this->order_query_args['status'] );
-		$limit                 = $this->get_items_per_page( 'edit_' . $this->order_type . '_per_page' );
-		$orders->total         = $count;
+		$order_count_cache = new OrderCountCache( $this->order_type );
+		$count             = $order_count_cache->get_count_by_status( $this->order_query_args['status'] );
+		$limit             = $this->get_items_per_page( 'edit_' . $this->order_type . '_per_page' );
+		$orders->total     = $count;
 
 		return ceil( $count / $limit );
 	}
