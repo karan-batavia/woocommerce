@@ -6,6 +6,7 @@ import {
 	isFailResponse,
 	isObserverResponse,
 	type ObserverResponse,
+	responseTypes,
 } from '@woocommerce/types';
 
 export interface EventEmitter {
@@ -87,7 +88,7 @@ export function createEmitter(): EventEmitter {
 			// We don't care about errors blocking execution, but will console.error for troubleshooting.
 			// eslint-disable-next-line no-console
 			console.error( e );
-			responses.push( { type: 'error' } );
+			responses.push( { type: responseTypes.ERROR } );
 			return responses;
 		}
 		return responses;
