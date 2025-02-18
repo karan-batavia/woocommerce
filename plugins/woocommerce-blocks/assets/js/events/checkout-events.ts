@@ -4,8 +4,17 @@
 import { createEmitter, type EventListener } from './event-emitter';
 
 export const CHECKOUT_EVENTS = {
+	/**
+	 * Event emitted after checkout processing if there are no errors in the data store.
+	 */
 	CHECKOUT_SUCCESS: 'checkout_success',
+	/**
+	 * Event emitted after checkout processing if there is an error in the data store.
+	 */
 	CHECKOUT_FAIL: 'checkout_fail',
+	/**
+	 * Event emitted when the checkout form is validated, before processing starts.
+	 */
 	CHECKOUT_VALIDATION: 'checkout_validation',
 };
 
