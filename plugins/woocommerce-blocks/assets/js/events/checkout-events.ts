@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { createEmitter, type EventListener } from './event-emitter';
+import { createEmitter } from './event-emitter';
 
 export const CHECKOUT_EVENTS = {
 	/**
