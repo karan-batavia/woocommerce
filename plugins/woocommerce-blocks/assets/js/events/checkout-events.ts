@@ -10,14 +10,15 @@ export const CHECKOUT_EVENTS = {
 };
 
 export const checkoutEventsEmitter = createEmitter();
-const callbackWrapper =
-	( eventName: string ) =>
-	( callback: EventListener, priority = 10 ) =>
-		checkoutEventsEmitter.subscribe( callback, priority, eventName );
+
 export const checkoutEvents = {
-	onCheckoutValidation: callbackWrapper(
+	onCheckoutValidation: checkoutEventsEmitter.createSubscribeFunction(
 		CHECKOUT_EVENTS.CHECKOUT_VALIDATION
 	),
-	onCheckoutSuccess: callbackWrapper( CHECKOUT_EVENTS.CHECKOUT_SUCCESS ),
-	onCheckoutFail: callbackWrapper( CHECKOUT_EVENTS.CHECKOUT_FAIL ),
+	onCheckoutSuccess: checkoutEventsEmitter.createSubscribeFunction(
+		CHECKOUT_EVENTS.CHECKOUT_SUCCESS
+	),
+	onCheckoutFail: checkoutEventsEmitter.createSubscribeFunction(
+		CHECKOUT_EVENTS.CHECKOUT_FAIL
+	),
 };

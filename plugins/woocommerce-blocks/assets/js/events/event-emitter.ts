@@ -23,6 +23,9 @@ export interface EventEmitter {
 		priority: number,
 		eventName: string
 	) => VoidFunction;
+	createSubscribeFunction: (
+		eventName: string
+	) => ( listener: EventListener, priority: number ) => VoidFunction;
 }
 
 export type EventListener = (
@@ -144,6 +147,26 @@ export function createEmitter(): EventEmitter {
 		 */
 		emitWithAbort: async ( eventName: string, data: unknown ) => {
 			return await notifyListenersWithAbort( eventName, data );
+		},
+
+		/**
+		 * Creates a wrapper function for subscribing to a specific event.
+		 *
+		 * This simplifies the plugin API by providing focused subscription methods.
+		 * Instead of plugins using the raw `subscribe` method with event names, they
+		 * get dedicated functions like `onCheckoutSuccess(callback, priority)`.
+		 *
+		 * @example
+		 * const onCheckoutSuccess = createSubscribeFunction( 'checkout_success' );
+		 * // Plugin usage:
+		 * onCheckoutSuccess( ( data ) => { ... }, 10 );
+		 *
+		 * @param eventName - The event to create a subscription function for.
+		 * @return A function that accepts a callback and optional priority.
+		 */
+		createSubscribeFunction( eventName: string ) {
+			return ( callback: EventListener, priority = 10 ) =>
+				this.subscribe( callback, priority, eventName );
 		},
 	};
 }
