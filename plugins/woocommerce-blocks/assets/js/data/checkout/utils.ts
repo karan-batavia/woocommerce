@@ -165,7 +165,7 @@ export const runCheckoutSuccessObservers = ( {
 		}
 	} );
 
-	if ( isSuccessResponse( successResponse ) && ! errorResponse ) {
+	if ( successResponse && ! errorResponse ) {
 		dispatch.__internalSetComplete( successResponse );
 	} else if ( isObject( errorResponse ) ) {
 		if ( errorResponse.message && isString( errorResponse.message ) ) {
