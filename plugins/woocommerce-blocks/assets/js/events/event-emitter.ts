@@ -25,7 +25,7 @@ export interface EventEmitter {
 	) => VoidFunction;
 	createSubscribeFunction: (
 		eventName: string
-	) => ( listener: EventListener, priority: number ) => VoidFunction;
+	) => ( listener: EventListener, priority?: number ) => VoidFunction;
 }
 
 export type EventListener = (
