@@ -29,10 +29,8 @@ export type CheckoutAndPaymentNotices = {
  * Type for emitAfterProcessingEventsType() thunk
  */
 export type emitAfterProcessingEventsType = ( {
-	observers,
 	notices,
 }: {
-	observers: EventObserversType;
 	notices: CheckoutAndPaymentNotices;
 } ) => ( { select, dispatch, registry }: CheckoutThunkArgs ) => void;
 
