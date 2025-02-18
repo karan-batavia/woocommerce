@@ -57,9 +57,15 @@ export function createEmitter(): EventEmitter {
 		const clonedListenersByPriority = Array.from( listenersForEvent );
 		const responses = [];
 		for ( const { listener } of clonedListenersByPriority ) {
-			const observerResponse = await listener( data );
-			if ( isObserverResponse( observerResponse ) ) {
-				responses.push( observerResponse );
+			try {
+				const observerResponse = await listener( data );
+				if ( isObserverResponse( observerResponse ) ) {
+					responses.push( observerResponse );
+				}
+			} catch ( e ) {
+				// We don't care about errors blocking execution, but will console.error for troubleshooting.
+				// eslint-disable-next-line no-console
+				console.error( e );
 			}
 		}
 		return responses;
