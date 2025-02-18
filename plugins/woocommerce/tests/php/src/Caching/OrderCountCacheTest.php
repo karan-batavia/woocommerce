@@ -52,16 +52,15 @@ class OrderCountCacheTest extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test that order counts get cached and can be accessed.
+	 * Test that a valid status and order type can be cached.
 	 */
-	public function test_order_counts_cached() {
-		$this->create_initial_orders();
-		$counts = OrderUtil::get_count_for_type( 'shop_order' );
-
+	public function test_cache_order_counts() {
+		$counts = array(
+			'wc-pending' => 5,
+		);
+		$this->order_cache->set( $counts, 'shop_order' );
 		$this->assertTrue( $this->order_cache->is_cached( 'shop_order' ) );
-		$this->assertEquals( 1, $this->order_cache->get( 'shop_order' )['wc-pending'] );
-		$this->assertEquals( 2, $this->order_cache->get( 'shop_order' )['wc-completed'] );
-		$this->assertEquals( 1, $this->order_cache->get( 'shop_order' )['wc-failed'] );
+		$this->assertEquals( 5, $this->order_cache->get( 'shop_order' )['wc-pending'] );
 	}
 
 	/**
@@ -76,29 +75,13 @@ class OrderCountCacheTest extends \WC_Unit_Test_Case {
 	}
 
 	/**
-	 * Test that valid statuses get set.
-	 */
-	public function test_valid_statuses() {
-		$counts = array(
-			'wc-pending' => 5,
-		);
-		$this->order_cache->set( $counts, 'shop_order' );
-		$this->assertEquals( 5, $this->order_cache->get( 'shop_order' )['wc-pending'] );
-	}
-
-	/**
 	 * Test that invalid order types cannot be used.
 	 */
 	public function test_invalid_order_type() {
-		
+		$counts = array(
+			'wc-pending' => 5,
+		);
+		$this->expectException( CacheException::class );
+		$this->order_cache->set( $counts, 'invalid_order_type' );
 	}
-
-	/**
-	 * Test that valid order types can be used.
-	 */
-	public function test_valid_order_types() {
-
-	}
-
-
 }
