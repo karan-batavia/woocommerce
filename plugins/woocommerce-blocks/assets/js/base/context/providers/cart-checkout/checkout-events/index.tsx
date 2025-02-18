@@ -251,7 +251,6 @@ export const CheckoutEventsProvider = ( {
 	useEffect( () => {
 		if ( isCheckoutBeforeProcessing ) {
 			__internalEmitValidateEvent( {
-				observers: currentObservers.current,
 				setValidationErrors,
 			} );
 		}
