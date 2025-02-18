@@ -40,6 +40,13 @@ export interface EventListenerWithPriority {
  */
 export function createEmitter(): EventEmitter {
 	const listeners = new Map< string, EventListenerWithPriority[] >();
+
+	/**
+	 * Notify listeners for an event. All subscribed observers will be run.
+	 *
+	 * @param eventName The event to emit.
+	 * @param data      Optional data to pass to the event listeners.
+	 */
 	const notifyListeners = async ( eventName: string, data: unknown ) => {
 		const listenersForEvent = listeners.get( eventName ) || [];
 		// We use Array.from to clone the listeners Set. This ensures that we don't run a listener that was added as a
@@ -54,6 +61,12 @@ export function createEmitter(): EventEmitter {
 		}
 		return responses;
 	};
+	/**
+	 * Notify listeners with abort, stopping processing if any observer returns an error or fail type.
+	 *
+	 * @param eventName The event to emit.
+	 * @param data      Optional data to pass to the event listeners.
+	 */
 	const notifyListenersWithAbort = async (
 		eventName: string,
 		data: unknown
@@ -87,6 +100,13 @@ export function createEmitter(): EventEmitter {
 	};
 
 	return {
+		/**
+		 * Subscribes a listener to an event.
+		 *
+		 * @param listener  The listener/observer function to subscribe.
+		 * @param priority  The priority of the listener. Listeners with lower priority are called first.
+		 * @param eventName The event to subscribe to.
+		 */
 		subscribe( listener, priority = 10, eventName: string ) {
 			let listenersForEvent = listeners.get( eventName ) || [];
 			// Keep listenerObject here so it can be used to delete the entry from the Set later.
@@ -105,10 +125,23 @@ export function createEmitter(): EventEmitter {
 			};
 		},
 
+		/**
+		 * Emits events on registered observers for the provided event name.
+		 *
+		 * @param eventName The event to emit.
+		 * @param data      Optional data to pass to the event listeners.
+		 */
 		emit: async ( eventName: string, data: unknown ) => {
 			return await notifyListeners( eventName, data );
 		},
 
+		/**
+		 * Emits events on registered observers for the provided event name. It stops processing
+		 * if any observers return an error or fail type.
+		 *
+		 * @param eventName The event to emit.
+		 * @param data      Optional data to pass to the event listeners.
+		 */
 		emitWithAbort: async ( eventName: string, data: unknown ) => {
 			return await notifyListenersWithAbort( eventName, data );
 		},
