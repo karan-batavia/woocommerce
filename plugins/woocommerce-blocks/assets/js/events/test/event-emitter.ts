@@ -59,4 +59,32 @@ describe( 'Event emitter v2', () => {
 		await emitter.emit( testEventName, 'test data' );
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'allows observers to return their results in a promises', async () => {
+		const emitter = createEmitter();
+		const callback = jest
+			.fn()
+			.mockReturnValue( Promise.resolve( { type: 'success' } ) );
+		const testEventName = 'test';
+		emitter.subscribe( callback, 10, testEventName );
+		const responses = await emitter.emit( testEventName, 'test data' );
+		expect( callback ).toHaveBeenCalledWith( 'test data' );
+		expect( responses ).toHaveLength( 1 );
+	} );
+
+	it( 'emits events with abort, preventing subsequent observers from running after first fail', async () => {
+		const emitter = createEmitter();
+		const callback = jest.fn().mockReturnValue( { type: 'error' } );
+		const callback2 = jest.fn();
+		const testEventName = 'test';
+		emitter.subscribe( callback, 10, testEventName );
+		emitter.subscribe( callback2, 10, testEventName );
+		const responses = await emitter.emitWithAbort(
+			testEventName,
+			'test data'
+		);
+		expect( callback ).toHaveBeenCalledWith( 'test data' );
+		expect( callback2 ).not.toHaveBeenCalled();
+		expect( responses ).toHaveLength( 1 );
+	} );
 } );
