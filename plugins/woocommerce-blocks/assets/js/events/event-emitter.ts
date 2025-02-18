@@ -39,18 +39,14 @@ export interface EventListenerWithPriority {
  * @return The event emitter.
  */
 export function createEmitter(): EventEmitter {
-	const listeners = new Map< string, Set< EventListenerWithPriority > >();
+	const listeners = new Map< string, EventListenerWithPriority[] >();
 	const notifyListeners = async ( eventName: string, data: unknown ) => {
-		const listenersForEvent =
-			listeners.get( eventName ) ||
-			new Set< EventListenerWithPriority >();
+		const listenersForEvent = listeners.get( eventName ) || [];
 		// We use Array.from to clone the listeners Set. This ensures that we don't run a listener that was added as a
 		// response to another listener.
-		const clonedListenersByPriority = Array.from( listenersForEvent )
-			.sort( ( a, b ) => a.priority - b.priority )
-			.map( ( { listener } ) => listener );
+		const clonedListenersByPriority = Array.from( listenersForEvent );
 		const responses = [];
-		for ( const listener of clonedListenersByPriority ) {
+		for ( const { listener } of clonedListenersByPriority ) {
 			const observerResponse = await listener( data );
 			if ( isObserverResponse( observerResponse ) ) {
 				responses.push( observerResponse );
@@ -62,17 +58,13 @@ export function createEmitter(): EventEmitter {
 		eventName: string,
 		data: unknown
 	) => {
-		const listenersForEvent =
-			listeners.get( eventName ) ||
-			new Set< EventListenerWithPriority >();
+		const listenersForEvent = listeners.get( eventName ) || [];
 		// We use Array.from to clone the listeners Set. This ensures that we don't run a listener that was added as a
 		// response to another listener.
-		const clonedListenersByPriority = Array.from( listenersForEvent )
-			.sort( ( a, b ) => a.priority - b.priority )
-			.map( ( { listener } ) => listener );
+		const clonedListenersByPriority = Array.from( listenersForEvent );
 		const responses: ObserverResponse[] = [];
 		try {
-			for ( const listener of clonedListenersByPriority ) {
+			for ( const { listener } of clonedListenersByPriority ) {
 				const observerResponse = await listener( data );
 				if ( isObserverResponse( observerResponse ) ) {
 					responses.push( observerResponse );
@@ -96,19 +88,19 @@ export function createEmitter(): EventEmitter {
 
 	return {
 		subscribe( listener, priority = 10, eventName: string ) {
-			let listenersForEvent =
-				listeners.get( eventName ) ||
-				new Set< EventListenerWithPriority >();
+			let listenersForEvent = listeners.get( eventName ) || [];
 			// Keep listenerObject here so it can be used to delete the entry from the Set later.
 			const listenerObject = { listener, priority };
-			listenersForEvent.add( listenerObject );
+			listenersForEvent.push( listenerObject );
+			// Sort the listeners by priority before storing them in the map.
+			listenersForEvent.sort( ( a, b ) => a.priority - b.priority );
 			listeners.set( eventName, listenersForEvent );
 			return () => {
 				// Re-get the listeners for the event in case the list was updated before unsubscribe was called.
-				listenersForEvent =
-					listeners.get( eventName ) ||
-					new Set< EventListenerWithPriority >();
-				listenersForEvent.delete( listenerObject );
+				listenersForEvent = listeners.get( eventName ) || [];
+				listenersForEvent = listenersForEvent.filter(
+					( l ) => l !== listenerObject
+				);
 				listeners.set( eventName, listenersForEvent );
 			};
 		},
