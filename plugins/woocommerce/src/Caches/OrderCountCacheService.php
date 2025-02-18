@@ -31,8 +31,8 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_new_order( $order_id, $order ) {
-		$order_count_cache               = new OrderCountCache();
-		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
+		$order_count_cache                       = new OrderCountCache();
+		$counts                                  = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $order->get_status() ] += 1;
 		$order_count_cache->set( $counts, $order->get_type() );
 	}
@@ -44,9 +44,9 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_delete_order( $order_id, $order ) {
-		$order_count_cache               = new OrderCountCache();
-		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
-		$counts[ $order->get_status() ] -= 1;
+		$order_count_cache                       = new OrderCountCache();
+		$counts                                  = OrderUtil::get_count_for_type( $order->get_type() );
+		$counts[ 'wc-' . $order->get_status() ] -= 1;
 		$order_count_cache->set( $counts, $order->get_type() );
 	}
 
