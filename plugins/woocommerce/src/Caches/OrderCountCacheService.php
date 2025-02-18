@@ -13,12 +13,19 @@ use Automattic\WooCommerce\Utilities\OrderUtil;
 class OrderCountCacheService {
 
 	/**
+	 * OrderCountCache instance.
+	 *
+	 * @var OrderCountCache
+	 */
+	private $order_count_cache;
+
+	/**
 	 * Class initialization, invoked by the DI container.
 	 *
 	 * @internal
-	 * @param OrderCountCache $order_count_cache The aggregate order cache engine to use.
 	 */
 	final public function init() {
+		$this->order_count_cache = new OrderCountCache();
 		add_action( 'woocommerce_new_order', array( $this, 'update_on_new_order' ), 10, 2 );
 		add_action( 'woocommerce_before_delete_order', array( $this, 'update_on_delete_order' ), 10, 2 );
 		add_action( 'woocommerce_order_status_changed', array( $this, 'update_on_order_status_changed' ), 10, 4 );
@@ -31,10 +38,14 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_new_order( $order_id, $order ) {
-		$order_count_cache                       = new OrderCountCache();
-		$counts                                  = OrderUtil::get_count_for_type( $order->get_type() );
+		if ( ! $this->order_count_cache->is_cached( $order->get_type() ) ) {
+			return;
+		}
+
+		$counts                                 = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $order->get_status() ] += 1;
-		$order_count_cache->set( $counts, $order->get_type() );
+
+		$this->order_count_cache->set( $counts, $order->get_type() );
 	}
 
 	/**
@@ -44,10 +55,13 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_delete_order( $order_id, $order ) {
-		$order_count_cache                       = new OrderCountCache();
+		if ( ! $this->order_count_cache->is_cached( $order->get_type() ) ) {
+			return;
+		}
+
 		$counts                                  = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $order->get_status() ] -= 1;
-		$order_count_cache->set( $counts, $order->get_type() );
+		$this->order_count_cache->set( $counts, $order->get_type() );
 	}
 
 	/**
@@ -59,10 +73,13 @@ class OrderCountCacheService {
 	 * @param WC_Order $order The order.
 	 */
 	public function update_on_order_status_changed( $order_id, $previous_status, $next_status, $order ) {
-		$order_count_cache                   = new OrderCountCache();
+		if ( ! $this->order_count_cache->is_cached( $order->get_type() ) ) {
+			return;
+		}
+
 		$counts                              = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $previous_status ] -= 1;
 		$counts[ 'wc-' . $next_status ]     += 1;
-		$order_count_cache->set( $counts, $order->get_type() );
+		$this->order_count_cache->set( $counts, $order->get_type() );
 	}
 }
