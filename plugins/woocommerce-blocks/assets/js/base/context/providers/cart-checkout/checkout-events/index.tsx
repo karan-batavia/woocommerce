@@ -275,7 +275,6 @@ export const CheckoutEventsProvider = ( {
 
 		if ( isCheckoutAfterProcessing ) {
 			__internalEmitAfterProcessingEvents( {
-				observers: currentObservers.current,
 				notices: {
 					checkoutNotices,
 					paymentNotices,
