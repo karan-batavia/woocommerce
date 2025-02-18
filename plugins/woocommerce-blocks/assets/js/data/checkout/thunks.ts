@@ -31,10 +31,6 @@ import {
 	runCheckoutFailObservers,
 	runCheckoutSuccessObservers,
 } from './utils';
-import {
-	EVENTS,
-	emitEventWithAbort,
-} from '../../base/context/providers/cart-checkout/checkout-events/event-emit';
 import type {
 	emitValidateEventType,
 	emitAfterProcessingEventsType,
