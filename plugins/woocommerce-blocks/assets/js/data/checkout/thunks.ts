@@ -152,7 +152,7 @@ export const __internalEmitAfterProcessingEvents: emitAfterProcessingEventsType 
 			} else {
 				checkoutEventsEmitter
 					.emitWithAbort( CHECKOUT_EVENTS.CHECKOUT_SUCCESS, data )
-					.then( ( observerResponses: unknown[] ) => {
+					.then( ( observerResponses ) => {
 						runCheckoutSuccessObservers( {
 							observerResponses,
 							dispatch,
