@@ -45,14 +45,12 @@ export const handleErrorResponse = ( {
 	let errorResponse = null;
 	observerResponses.forEach( ( response ) => {
 		if ( isErrorResponse( response ) || isFailResponse( response ) ) {
-			// rather than a mix of both.
 			if ( response.message && isString( response.message ) ) {
 				const errorOptions =
 					response.messageContext &&
 					isString( response.messageContext )
-						? // The `as string` is OK here because of the type guard above.
-						  {
-								context: response.messageContext as string,
+						? {
+								context: response.messageContext,
 						  }
 						: undefined;
 				errorResponse = response;
