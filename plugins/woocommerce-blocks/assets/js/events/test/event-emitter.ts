@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { responseTypes } from '@woocommerce/types';
+
+/**
  * Internal dependencies
  */
 import { createEmitter } from '../event-emitter';
@@ -64,7 +69,9 @@ describe( 'Event emitter v2', () => {
 		const emitter = createEmitter();
 		const callback = jest
 			.fn()
-			.mockReturnValue( Promise.resolve( { type: 'success' } ) );
+			.mockReturnValue(
+				Promise.resolve( { type: responseTypes.SUCCESS } )
+			);
 		const testEventName = 'test';
 		emitter.subscribe( callback, 10, testEventName );
 		const responses = await emitter.emit( testEventName, 'test data' );
@@ -74,7 +81,9 @@ describe( 'Event emitter v2', () => {
 
 	it( 'emits events with abort, preventing subsequent observers from running after first fail', async () => {
 		const emitter = createEmitter();
-		const callback = jest.fn().mockReturnValue( { type: 'error' } );
+		const callback = jest
+			.fn()
+			.mockReturnValue( { type: responseTypes.ERROR } );
 		const callback2 = jest.fn();
 		const testEventName = 'test';
 		emitter.subscribe( callback, 10, testEventName );

@@ -1,8 +1,11 @@
 /**
+ * External dependencies
+ */
+import { responseTypes } from '@woocommerce/types';
+/**
  * Internal dependencies
  */
 import { checkoutEvents, checkoutEventsEmitter } from '../checkout-events';
-import { responseTypes } from '@woocommerce/types';
 
 describe( 'Checkout events emitter v2', () => {
 	it( 'allows callbacks to subscribe to events using helper functions', async () => {
