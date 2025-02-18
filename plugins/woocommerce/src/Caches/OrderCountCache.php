@@ -71,15 +71,9 @@ class OrderCountCache extends ObjectCache {
 	 * @return string[]
 	 */
 	private function get_valid_statuses() {
-		$legacy_statuses = array(
-			OrderStatus::AUTO_DRAFT,
-			OrderStatus::DRAFT,
-			OrderStatus::TRASH,
-		);
-
 		return array_merge(
 			array_keys( wc_get_order_statuses() ),
-			$legacy_statuses
+			array_keys( get_post_stati() ),
 		);
 	}
 }

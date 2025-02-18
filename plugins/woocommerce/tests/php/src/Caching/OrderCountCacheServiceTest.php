@@ -19,15 +19,15 @@ class OrderCountCacheServiceTest extends \WC_Unit_Test_Case {
 	 *
 	 * @var OrderCache
 	 */
-	private $cache;
+	private $order_cache;
 
 	/**
 	 * Setup test.
 	 */
 	public function setUp(): void {
 		parent::setUp();
-		$this->cache = new OrderCountCache();
-		$this->cache->flush();
+		$this->order_cache = new OrderCountCache();
+		$this->order_cache->flush();
 	}
 
 	/**
@@ -79,5 +79,4 @@ class OrderCountCacheServiceTest extends \WC_Unit_Test_Case {
 		$this->assertEquals( $initial_count[ OrderInternalStatus::PENDING ] - 1, $count[ OrderInternalStatus::PENDING ] );
 		$this->assertEquals( $initial_count[ OrderInternalStatus::COMPLETED ] + 1, $count[ OrderInternalStatus::COMPLETED ] );
 	}
-
 }
