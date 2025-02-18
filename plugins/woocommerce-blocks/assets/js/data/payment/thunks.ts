@@ -29,7 +29,6 @@ import {
 	emitEventWithAbort,
 	noticeContexts,
 } from '../../base/context/event-emit';
-
 import { EMIT_TYPES } from '../../base/context/providers/cart-checkout/payment-events/event-emit';
 import type { emitProcessingEventType } from './types';
 import { CART_STORE_KEY } from '../cart';
