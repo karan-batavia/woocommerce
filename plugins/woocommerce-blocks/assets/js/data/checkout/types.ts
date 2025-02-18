@@ -7,7 +7,6 @@ import type { FieldValidationStatus } from '@woocommerce/types';
 /**
  * Internal dependencies
  */
-import type { EventObserversType } from '../../base/context/event-emit/types';
 import type { CheckoutState } from './default-state';
 import type { PaymentState } from '../payment/default-state';
 import type { CheckoutThunkArgs } from './thunks';
