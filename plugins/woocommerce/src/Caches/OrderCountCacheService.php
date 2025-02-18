@@ -34,7 +34,7 @@ class OrderCountCacheService {
 		$order_count_cache               = new OrderCountCache();
 		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $order->get_status() ] += 1;
-		$order_count_cache->set( $order->get_type(), $counts );
+		$order_count_cache->set( $counts, $order->get_type() );
 	}
 
 	/**
@@ -47,7 +47,7 @@ class OrderCountCacheService {
 		$order_count_cache               = new OrderCountCache();
 		$counts                          = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ $order->get_status() ] -= 1;
-		$order_count_cache->set( $order->get_type(), $counts );
+		$order_count_cache->set( $counts, $order->get_type() );
 	}
 
 	/**
@@ -63,6 +63,6 @@ class OrderCountCacheService {
 		$counts                              = OrderUtil::get_count_for_type( $order->get_type() );
 		$counts[ 'wc-' . $previous_status ] -= 1;
 		$counts[ 'wc-' . $next_status ]     += 1;
-		$order_count_cache->set( $order->get_type(), $counts );
+		$order_count_cache->set( $counts, $order->get_type() );
 	}
 }
