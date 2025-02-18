@@ -112,11 +112,24 @@ export function createEmitter(): EventEmitter {
 		 */
 		subscribe( listener, priority = 10, eventName: string ) {
 			let listenersForEvent = listeners.get( eventName ) || [];
-			// Keep listenerObject here so it can be used to delete the entry from the Set later.
+			// Keep listenerObject here so it can be used to delete the entry from the listeners array later.
 			const listenerObject = { listener, priority };
-			listenersForEvent.push( listenerObject );
-			// Sort the listeners by priority before storing them in the map.
-			listenersForEvent.sort( ( a, b ) => a.priority - b.priority );
+
+			// Find the correct insertion index to maintain a sorted insert. The alternative is to sort after every
+			// insert, which is less efficient.
+			const insertIndex = listenersForEvent.findIndex(
+				( existing ) => existing.priority > priority
+			);
+
+			if ( insertIndex === -1 ) {
+				// If no higher priority found, append to end.
+				listenersForEvent.push( listenerObject );
+			} else {
+				// Insert at the correct position, 1 before the next highest priority. This means listeners added with
+				// the same priority will be called in the order they were added.
+				listenersForEvent.splice( insertIndex, 0, listenerObject );
+			}
+
 			listeners.set( eventName, listenersForEvent );
 			return () => {
 				// Re-get the listeners for the event in case the list was updated before unsubscribe was called.
