@@ -3,7 +3,7 @@
  */
 import { createEmitter } from '../event-emitter';
 
-describe( 'Event emitter v2 tests', () => {
+describe( 'Event emitter v2', () => {
 	it( 'allows multiple callbacks to subscribe to events', async () => {
 		const emitter = createEmitter();
 		const callback = jest.fn();
