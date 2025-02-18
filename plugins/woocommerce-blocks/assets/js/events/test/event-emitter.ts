@@ -96,4 +96,54 @@ describe( 'Event emitter v2', () => {
 		expect( callback2 ).not.toHaveBeenCalled();
 		expect( responses ).toHaveLength( 1 );
 	} );
+
+	it( 'continues executing subsequent observers if one throws on emit', () => {
+		const emitter = createEmitter();
+		const callback = jest.fn().mockImplementation( () => {
+			throw new Error( 'test error' );
+		} );
+		const callback2 = jest.fn();
+		const testEventName = 'test';
+		emitter.subscribe( callback, 10, testEventName );
+		emitter.subscribe( callback2, 10, testEventName );
+		emitter.emit( testEventName, 'test data' );
+		expect( callback ).toHaveBeenCalledWith( 'test data' );
+		expect( callback2 ).toHaveBeenCalledWith( 'test data' );
+		expect( console ).toHaveErroredWith( new Error( 'test error' ) );
+	} );
+
+	it( 'continues executing subsequent observers if one throws on emit', () => {
+		const emitter = createEmitter();
+		const callback = jest.fn().mockImplementation( () => {
+			throw new Error( 'test error' );
+		} );
+		const callback2 = jest.fn();
+		const testEventName = 'test';
+		emitter.subscribe( callback, 10, testEventName );
+		emitter.subscribe( callback2, 10, testEventName );
+		emitter.emit( testEventName, 'test data' );
+		expect( callback ).toHaveBeenCalledWith( 'test data' );
+		expect( callback2 ).toHaveBeenCalledWith( 'test data' );
+		expect( console ).toHaveErroredWith( new Error( 'test error' ) );
+	} );
+
+	it( 'stops executing subsequent observers if one throws on emitWithAbort', async () => {
+		const emitter = createEmitter();
+		const callback = jest.fn().mockImplementation( () => {
+			throw new Error( 'test error' );
+		} );
+		const callback2 = jest.fn();
+		const testEventName = 'test';
+		emitter.subscribe( callback, 10, testEventName );
+		emitter.subscribe( callback2, 10, testEventName );
+		const responses = await emitter.emitWithAbort(
+			testEventName,
+			'test data'
+		);
+		expect( callback ).toHaveBeenCalledWith( 'test data' );
+		expect( callback2 ).not.toHaveBeenCalledWith( 'test data' );
+		expect( console ).toHaveErroredWith( new Error( 'test error' ) );
+		expect( responses ).toHaveLength( 1 );
+		expect( responses[ 0 ] ).toEqual( { type: responseTypes.ERROR } );
+	} );
 } );
