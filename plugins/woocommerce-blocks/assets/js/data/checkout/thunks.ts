@@ -2,7 +2,7 @@
  * External dependencies
  */
 import {
-	isObject,
+	isValidValidationErrorsObject,
 	type CheckoutResponse,
 	isSuccessResponse,
 } from '@woocommerce/types';
@@ -102,8 +102,7 @@ export const __internalEmitValidateEvent: emitValidateEventType = ( {
 							createErrorNotice( errorMessage, { context } );
 						}
 						if (
-							isObject( validationErrors ) &&
-							Object.entries( validationErrors ).length >= 0
+							isValidValidationErrorsObject( validationErrors )
 						) {
 							setValidationErrors( validationErrors );
 						}
