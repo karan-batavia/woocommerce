@@ -6,7 +6,8 @@
  * @version  3.4.0
  */
 
-use Automattic\Jetpack\Constants;use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
