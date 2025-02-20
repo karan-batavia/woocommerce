@@ -32,6 +32,7 @@ import {
 	SettingsPaymentsWooCommercePaymentsWrapper,
 } from './settings-payments';
 import { ErrorBoundary } from './error-boundary';
+import { isFeatureEnabled } from '~/utils/features';
 
 const debug = debugFactory( 'wc-admin:client' );
 const appRoot = document.getElementById( 'root' );
@@ -92,10 +93,7 @@ if (
 
 // Render the payment settings components only if
 // the feature flag is enabled.
-if (
-	window.wcAdminFeatures &&
-	window.wcAdminFeatures[ 'reactify-classic-payments-settings' ] === true
-) {
+if ( isFeatureEnabled( 'reactify-classic-payments-settings' ) ) {
 	( function () {
 		const paymentsMainRoot = document.getElementById(
 			'experimental_wc_settings_payments_main'

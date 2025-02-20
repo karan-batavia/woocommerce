@@ -31,6 +31,7 @@ import {
 	BANNER_TYPE_HEADER as ORDER_ATTRIBUTION_INSTALL_BANNER_TYPE_HEADER,
 } from '~/order-attribution-install-banner';
 import { isTaskListActive } from '~/hooks/use-tasklists-state';
+import { isFeatureEnabled } from '~/utils/features';
 
 export const PAGE_TITLE_FILTER = 'woocommerce_admin_header_page_title';
 
@@ -136,7 +137,7 @@ export const Header = ( { sections, isEmbedded = false, query } ) => {
 		isWCAdmin() && getPath() === '/analytics/overview';
 
 	const isReactifyPaymentsSettingsScreen = Boolean(
-		window.wcAdminFeatures?.[ 'reactify-classic-payments-settings' ] &&
+		isFeatureEnabled( 'reactify-classic-payments-settings' ) &&
 			query?.page === 'wc-settings' &&
 			query?.tab === 'checkout'
 	);

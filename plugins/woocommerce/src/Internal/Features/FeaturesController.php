@@ -376,6 +376,26 @@ class FeaturesController {
 					'is_legacy'          => true,
 					'is_experimental'    => false,
 				),
+				'reactify-classic-payments-settings'              => array(
+					'name'               => __( 'Payment Settings (beta)', 'woocommerce' ),
+					'description'        => __(
+						'Enable the new payments settings experience',
+						'woocommerce'
+					),
+					'enabled_by_default' => true,
+					'disable_ui'         => false,
+
+					/*
+					* This is not truly a legacy feature (it is not a feature that pre-dates the FeaturesController),
+					* but we wish to handle compatibility checking in a similar fashion to legacy features. The
+					* rational for setting legacy to true is therefore similar to that of the 'order_attribution'
+					* feature.
+					*
+					* @see https://github.com/woocommerce/woocommerce/pull/39701#discussion_r1376976959
+					*/
+					'is_legacy'          => true,
+					'is_experimental'    => false,
+				),
 				'block_email_editor'     => array(
 					'name'               => __( 'Block Email Editor (alpha)', 'woocommerce' ),
 					'description'        => __(
