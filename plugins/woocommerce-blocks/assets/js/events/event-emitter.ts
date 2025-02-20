@@ -9,6 +9,15 @@ import {
 	responseTypes,
 } from '@woocommerce/types';
 
+export type EventListener = (
+	data: unknown
+) => Promise< ObserverResponse | true > | ObserverResponse | true;
+
+export type EventListenerRegistrationFunction = (
+	listener: EventListener,
+	priority?: number
+) => VoidFunction;
+
 export interface EventEmitter {
 	emit: (
 		eventName: string,
@@ -27,11 +36,6 @@ export interface EventEmitter {
 		eventName: string
 	) => ( listener: EventListener, priority?: number ) => VoidFunction;
 }
-
-export type EventListener = (
-	data: unknown
-) => Promise< ObserverResponse | true > | ObserverResponse | true;
-
 export interface EventListenerWithPriority {
 	listener: EventListener;
 	priority: number;
