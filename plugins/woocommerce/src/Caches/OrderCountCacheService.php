@@ -5,7 +5,8 @@ declare( strict_types=1 );
 namespace Automattic\WooCommerce\Caches;
 
 use WC_Order;
-use Automattic\WooCommerce\Caching\BackgroundCaching;
+use Automattic\WooCommerce\Caching\BackgroundCache;
+use Automattic\WooCommerce\Caching\CacheAction;
 use Automattic\WooCommerce\Caching\WPCacheEngine;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 
@@ -41,9 +42,9 @@ class OrderCountCacheService {
 	 */
 	public function register_background_caching() {
 		$order_types        = wc_get_order_types( 'order-count' );
-		$background_caching = wc_get_container()->get( BackgroundCaching::class );
+		$background_caching = wc_get_container()->get( BackgroundCache::class );
 		foreach ( $order_types as $order_type ) {
-			$background_caching->register_action(
+			$background_cache_action = new CacheAction(
 				array(
 					'callback'            => function() use ( $order_type ) {
 						error_log( 'Removing order count cache for ' . $order_type );
@@ -58,6 +59,7 @@ class OrderCountCacheService {
 					},
 				)
 			);
+			$background_caching->register_action( $background_cache_action );
 		}
 	}
 
