@@ -1,11 +1,27 @@
 {
 	"name": "@woocommerce/email-editor",
+	"version": "0.1.0",
+	"description": "Gutenberg based email editor that is used in WooCommerce emails.",
+	"author": "Automattic",
+	"license": "GPL-2.0-or-later",
+ 	"keywords": [ "wordpress", "woocommerce", "email" ],
 	"private": true,
+	"homepage": "https://github.com/woocommerce/woocommerce/tree/trunk/packages/js/[_YOUR_PACKAGE_]/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/woocommerce/woocommerce.git"
+	},
+	"bugs": {
+		"url": "https://github.com/woocommerce/woocommerce/issues"
+	},
+	"main": "build/index.js",
+	"publishConfig": {
+		"access": "public"
+	},
 	"sideEffects": [
 		"build-style/**",
 		"src/**/*.scss"
 	],
-	"version": "0.1.0",
 	"scripts": {
 		"build:editor": "wp-scripts build && cp -Rf assets/ build",
 		"start": "wp-scripts start",
