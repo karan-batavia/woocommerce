@@ -8,15 +8,21 @@
 	width: 100%;
 }
 
-// Fix editor width. We don't use resizable editor wrapper so we need to set the width manually here
+// Fix editor width.
+// We don't use resizable editor wrapper
+// so we need to set the width manually here
 .editor-visual-editor > div {
 	width: 100%;
 }
 
 #mailpoet-email-editor {
+
+	/* stylelint-disable-next-line selector-class-pattern */
 	.editor-header__toolbar {
 		flex-grow: 1;
 	}
+
+	/* stylelint-disable-next-line selector-class-pattern */
 	.editor-header__center {
 		flex-grow: 3;
 	}
@@ -25,6 +31,8 @@
 // Specific styles for the component EmailTypeInfo
 // Styles are based on the Block Card component from Gutenberg block editor
 .mailpoet-email-sidebar__email-type-info {
+
+	/* stylelint-disable-next-line selector-class-pattern */
 	.components-panel__row {
 		align-items: flex-start;
 	}
@@ -70,6 +78,7 @@
 }
 
 .mailpoet-email-editor__settings-panel {
+
 	.mailpoet-settings-panel__richtext {
 		border: 1px solid var(--wp-components-color-gray-600, #949494);
 		border-radius: 2px;
@@ -85,6 +94,7 @@
 		height: 14px;
 		line-height: 14px;
 		padding: 0 5px;
+
 		span {
 			height: 11px;
 		}
@@ -136,6 +146,7 @@
 	word-spacing: normal;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .visual-editor__email_layout_wrapper {
 	height: 100%;
 	margin: 0 auto;
@@ -143,6 +154,7 @@
 	width: 100%;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .visual-editor__email_content_wrapper {
 	display: flex;
 	height: 100%;
@@ -154,9 +166,11 @@
 
 	// Fix for mobile preview height
 	&.is-mobile-preview {
+
 		> div {
 			display: block !important;
 		}
+
 		.editor-styles-wrapper {
 			height: auto !important;
 		}
@@ -175,10 +189,7 @@
 }
 
 [data-rich-text-comment] {
-	background-color: var(
-		--wp-components-color-accent,
-		var(--wp-admin-theme-color, #3858e9)
-	);
+	background-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 
 	span {
 		color: var(--wp-components-color-accent-inverted, #fff);
