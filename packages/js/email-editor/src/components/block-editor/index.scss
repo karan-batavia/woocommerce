@@ -8,6 +8,22 @@
 	width: 100%;
 }
 
+// Temporary styles for Rich Text HTML comments from the PR: https://github.com/WordPress/gutenberg/pull/62128/files
+[data-rich-text-comment],
+[data-rich-text-format-boundary] {
+	border-radius: 2px;
+}
+
+[data-rich-text-comment] {
+	background-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+
+	span {
+		color: var(--wp-components-color-accent-inverted, #fff);
+		filter: none;
+		padding: 0 2px;
+	}
+}
+
 // Fix editor width.
 // We don't use resizable editor wrapper
 // so we need to set the width manually here
@@ -25,6 +41,29 @@
 	/* stylelint-disable-next-line selector-class-pattern */
 	.editor-header__center {
 		flex-grow: 3;
+	}
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.visual-editor__email_content_wrapper {
+	display: flex;
+	height: 100%;
+	width: 100%;
+
+	> div {
+		width: 100%;
+	}
+
+	// Fix for mobile preview height
+	&.is-mobile-preview {
+
+		> div {
+			display: block !important;
+		}
+
+		.editor-styles-wrapper {
+			height: auto !important;
+		}
 	}
 }
 
@@ -156,47 +195,9 @@
 	width: 100%;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
-.visual-editor__email_content_wrapper {
-	display: flex;
-	height: 100%;
-	width: 100%;
-
-	> div {
-		width: 100%;
-	}
-
-	// Fix for mobile preview height
-	&.is-mobile-preview {
-
-		> div {
-			display: block !important;
-		}
-
-		.editor-styles-wrapper {
-			height: auto !important;
-		}
-	}
-}
-
-// Hide the advanced settings in the sidebar. This panel is not used in the email editor at this moment.
+// Hide the advanced settings in the sidebar.
+// This panel is not used in the email editor at this moment.
 /* stylelint-disable-next-line selector-class-pattern */
 .block-editor-block-inspector__advanced {
 	display: none;
-}
-
-// Temporary styles for Rich Text HTML comments from the PR: https://github.com/WordPress/gutenberg/pull/62128/files
-[data-rich-text-comment],
-[data-rich-text-format-boundary] {
-	border-radius: 2px;
-}
-
-[data-rich-text-comment] {
-	background-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-
-	span {
-		color: var(--wp-components-color-accent-inverted, #fff);
-		filter: none;
-		padding: 0 2px;
-	}
 }

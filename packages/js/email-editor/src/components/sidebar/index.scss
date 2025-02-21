@@ -2,7 +2,8 @@
 
 .background-block-support-panel .mailpoet-grid-full-width,
 .border-block-support-panel .mailpoet-grid-full-width {
-	// setting the grid to 100% width because border block contains two grid columns
+	// setting the grid to 100% width
+	// because border block contains two grid columns
 	grid-column: 1/3;
 	// resetting margin fits the notice to the full column width
 	margin: 0;

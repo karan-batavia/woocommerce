@@ -1,14 +1,16 @@
-.block-editor-block-patterns-explorer
-.block-editor-block-patterns-list
-/* stylelint-disable-next-line selector-class-pattern */
-.block-editor-block-preview__container {
-	max-height: 300px !important;
-}
+/* Move the less specific selector before the more specific one */
 
-/* stylelint-disable-next-line selector-class-pattern */
+/* stylelint-disable selector-class-pattern */
 .block-editor-block-patterns-list__item .block-editor-block-preview__container {
 	align-items: flex-start !important;
 }
+
+.block-editor-block-patterns-explorer
+.block-editor-block-patterns-list
+.block-editor-block-preview__container {
+	max-height: 300px !important;
+}
+/* stylelint-enable */
 
 /* stylelint-disable-next-line selector-class-pattern */
 .block-editor-block-patterns-list__list-item {

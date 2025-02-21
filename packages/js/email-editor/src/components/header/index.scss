@@ -1,4 +1,5 @@
-// Document actions - Component in header for displaying email/campaign title edit popup
+// Document actions
+// Component in header for displaying email/campaign title edit popup
 .mailpoet-email-editor-campaign-name {
 	align-items: center;
 	display: flex;
@@ -51,7 +52,8 @@
 	display: none !important;
 }
 
-// Temporarily hide text about amount of changes to save. The wording is not great for email context.
+// Temporarily hide text about amount of changes to save.
+// The wording is not great for email context.
 /* stylelint-disable-next-line selector-class-pattern */
 .entities-saved-states__text-prompt {
 
@@ -60,11 +62,11 @@
 	}
 }
 
+/* stylelint-disable selector-class-pattern */
 // Ensure checkbox controls in save panel dropdown to span the full width
 .mailpoet-email-editor-save-button-dropdown
-/* stylelint-disable-next-line selector-class-pattern */
 .components-panel__row
-/* stylelint-disable-next-line selector-class-pattern */
 .components-checkbox-control {
 	width: 100%;
 }
+/* stylelint-enable */
