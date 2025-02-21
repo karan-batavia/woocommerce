@@ -54,6 +54,13 @@ $row_class    = apply_filters( 'woocommerce_admin_html_order_item_class', ! empt
 			?>
 		</div>
 	</td>
+	<td class="item_cost" width="1%" data-sort-value="<?php echo esc_attr( $item->get_cogs_value() ); ?>">
+		<div class="view">
+			<?php
+			echo wc_price( $item->get_cogs_value(), array( 'currency' => $order->get_currency() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			?>
+		</div>
+	</td>
 	<td class="quantity" width="1%">
 		<div class="view">
 			<?php

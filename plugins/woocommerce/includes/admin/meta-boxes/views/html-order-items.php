@@ -41,6 +41,7 @@ if ( wc_tax_enabled() ) {
 			<tr>
 				<th class="item sortable" colspan="2" data-sort="string-ins"><?php esc_html_e( 'Item', 'woocommerce' ); ?></th>
 				<?php do_action( 'woocommerce_admin_order_item_headers', $order ); ?>
+				<th class="item_price sortable" data-sort="float"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
 				<th class="item_cost sortable" data-sort="float"><?php esc_html_e( 'Cost', 'woocommerce' ); ?></th>
 				<th class="quantity sortable" data-sort="int"><?php esc_html_e( 'Qty', 'woocommerce' ); ?></th>
 				<th class="line_cost sortable" data-sort="float"><?php esc_html_e( 'Total', 'woocommerce' ); ?></th>
