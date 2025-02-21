@@ -30,6 +30,7 @@
 	border: 1px solid #ddd;
 	border-radius: 4px;
 
+	/* stylelint-disable-next-line selector-class-pattern */
 	.block-editor-block-preview__container::after {
 		outline: unset !important;
 		outline-offset: unset !important;
