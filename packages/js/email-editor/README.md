@@ -1,8 +1,7 @@
-# MailPoet Email Editor
+# WooCommerce Email Editor
 
-This folder contains the code for the MailPoet Email Editor JS Package.
+This folder contains the code for the WooCommerce Email Editor JS Package.
 We aim to extract the package as an independent library, so it can be used in other projects.
-As we are still in an exploration phase, we keep it together with the MailPoet codebase.
 
 You can try the email editor in [the WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/mailpoet/mailpoet/refs/heads/trunk/packages/js/email-editor/blueprint.json).
 
