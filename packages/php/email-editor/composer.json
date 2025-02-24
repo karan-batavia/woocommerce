@@ -20,7 +20,8 @@
 		"soundasleep/html2text": "^2.1"
 	},
 	"require-dev": {
-		"automattic/jetpack-changelogger": "3.3.0"
+		"automattic/jetpack-changelogger": "3.3.0",
+		"phpunit/phpunit": "^9.6"
 	},
 	"config": {
 		"platform": {
