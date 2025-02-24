@@ -121,3 +121,19 @@ setup( 'determine if multisite', async ( { api } ) => {
 		console.log( `IS_MULTISITE: ${ process.env.IS_MULTISITE }` );
 	}
 } );
+
+setup( 'general settings', async ( { api } ) => {
+	await api.post( 'settings/general/batch', {
+		update: [
+			{ id: 'woocommerce_allowed_countries', value: 'all' },
+			{ id: 'woocommerce_currency', value: 'USD' },
+			{ id: 'woocommerce_price_thousand_sep', value: ',' },
+			{ id: 'woocommerce_price_decimal_sep', value: '.' },
+			{ id: 'woocommerce_price_num_decimals', value: '2' },
+			{ id: 'woocommerce_store_address', value: 'addr 1' },
+			{ id: 'woocommerce_store_city', value: 'San Francisco' },
+			{ id: 'woocommerce_default_country', value: 'US:CA' },
+			{ id: 'woocommerce_store_postcode', value: '94107' },
+		],
+	} );
+} );

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { decodeEntities } from '@wordpress/html-entities';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { WooPaymentsMethodsLogos } from '@woocommerce/onboarding';
 import { PaymentExtensionSuggestionProvider } from '@woocommerce/data';
+import { recordEvent } from '@woocommerce/tracks';
 
 /**
  * Internal dependencies
@@ -134,6 +134,16 @@ export const PaymentExtensionSuggestionListItem = ( {
 						<Button
 							variant="primary"
 							onClick={ () => {
+								if ( pluginInstalled ) {
+									// Record the event when user clicks on a gateway's enable button.
+									recordEvent(
+										'settings_payments_provider_enable_click',
+										{
+											provider_id: extension.id,
+										}
+									);
+								}
+
 								if ( incentive ) {
 									acceptIncentive( incentive.promo_id );
 								}

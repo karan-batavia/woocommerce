@@ -23,6 +23,10 @@ on:
         required: true
         default: 'default'
         type: string
+      wc-version:
+        description: 'Specific WooCommerce version to install by the test jobs supporting it'
+        required: false
+        type: string
 
 concurrency:
   # Cancel concurrent jobs but not for push event. For push use the run_id to have a unique group.
@@ -48,7 +52,7 @@ jobs:
         with:
           filters: |
             needs-code-validation:
-              - '!((**/*.md)|(**/changelog/*)|(.cursor/**)|(.gitignore))'
+              - '!((**/*.md)|(**/changelog/*)|(.github/**)|(.husky/**)|(.cursor/**)|(.gitignore))'
             needs-changelog-validation:
               - '{packages,plugins}/*/!(changelog/**)/**'
             needs-markdown-validation:
@@ -72,26 +76,25 @@ jobs:
     steps:
       - uses: 'actions/checkout@v4'
         name: 'Checkout'
-        with:
-          # We tried to speed checkout up with shallow copies, but supporting PRs from forks forces us to follow this approach.
-          fetch-depth: ${{ ( ( github.base_ref && '0' ) || '1' ) }}
-      # Now let's get to generating the build matrix itself.
+
       - name: Setup - pnpm
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
+
       - name: Setup - spawn linting and testing jobs
         uses: actions/github-script@v7
         id: 'project-jobs'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         with:
           script: |
             // Intended behaviour of the jobs generation:
             // - PRs: run CI jobs aiming PRs and filter out jobs based on the content changes
             // - Pushes: run CI jobs aiming pushes without filtering based on the content changes
 
-            let baseRef   = '';
-            const baseSha = ${{ toJson( github.event.pull_request.base.sha ) }};
-            if ( baseSha ) {
-              // Use-case: trigger is pull request
-              baseRef = `--base-ref ${ baseSha }`;
+            let prNumberFilter   = '';
+            if ( '${{ github.event_name }}' === 'pull_request' ) {
+              prNumberFilter = `--pr-number ${{ github.event.pull_request.number }}`;
             }
 
             let githubEvent = ${{ toJson( github.event_name ) }};
@@ -119,7 +122,7 @@ jobs:
             }
 
             const child_process = require( 'node:child_process' );
-            child_process.execSync( `pnpm utils ci-jobs ${ baseRef } --event ${ githubEvent }` );
+            child_process.execSync( `pnpm utils ci-jobs ${ prNumberFilter } --event ${ githubEvent }` );
 
   project-lint-jobs:
     name: "Lint - ${{ matrix.projectName }} ${{ ( matrix.optional && ' (optional)' ) || '' }}"
@@ -128,6 +131,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'pull_request' && needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' && needs.project-jobs.outputs.lint-jobs != '[]' }}
     strategy:
       fail-fast: false
+      max-parallel: 4
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.lint-jobs ) }}
     steps:
@@ -142,6 +146,7 @@ jobs:
         with:
           install: '${{ matrix.projectName }}...'
           pull-package-deps: '${{ matrix.projectName }}'
+          php-version:  ${{ ( ( matrix.projectName == '@woocommerce/plugin-woocommerce' && '7.4' ) || 'false' ) }}
 
       - name: 'Lint'
         run: 'pnpm --filter="${{ matrix.projectName }}" ${{ matrix.command }}'
@@ -154,6 +159,7 @@ jobs:
     env: ${{ matrix.testEnv.envVars }}
     strategy:
       fail-fast: false
+      max-parallel: 30
       matrix:
         include: ${{ fromJSON( needs.project-jobs.outputs.test-jobs ) }}
     steps:
@@ -225,6 +231,7 @@ jobs:
           CODEVITALS_PROJECT_TOKEN: ${{ secrets.CODEVITALS_PROJECT_TOKEN }} # required by Metrics tests
           LAST_FAILED_RUN: ${{ vars.LAST_FAILED_RUN }}
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          WC_VERSION: ${{ inputs.wc-version }}
         run: |
           lastRunFile="${{ steps.download-last-run-info.outputs.download-path }}/last-run__${{ strategy.job-index }}/.last-run.json"
           lastRunFileDest="$ARTIFACTS_PATH/.last-run.json"
@@ -295,11 +302,14 @@ jobs:
     # on the results of the other jobs in the workflow.
     name: 'Evaluate Project Job Statuses'
     runs-on: ubuntu-latest
-    needs: [ 'identify-jobs-to-run', 'project-jobs', 'project-lint-jobs', 'project-test-jobs', 'validate-changelog', 'validate-markdown' ]
+    needs: [ 'identify-jobs-to-run', 'project-jobs', 'project-lint-jobs', 'project-test-jobs', 'validate-changelog', 'validate-markdown', 'validate-syncpack' ]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     steps:
       - uses: 'actions/checkout@v4'
         name: 'Checkout'
+        with:
+          sparse-checkout: |
+              .github/workflows/scripts
 
       - name: 'Evaluation'
         env:
@@ -319,11 +329,15 @@ jobs:
   alert-on-failure:
     name: 'Report results on Slack'
     runs-on: ubuntu-latest
-    needs: ['project-jobs', 'project-lint-jobs', 'project-test-jobs']
+    needs: ['project-jobs', 'project-lint-jobs', 'project-test-jobs', 'evaluate-project-jobs']
     if: ${{ !cancelled() && github.event_name != 'pull_request' && github.repository == 'woocommerce/woocommerce'  }}
     steps:
       - uses: 'actions/checkout@v4'
         name: 'Checkout'
+        with:
+          sparse-checkout: |
+              package.json
+              ./tools/monorepo-utils
 
       - name: 'Setup PNPM'
         uses: 'pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d'
@@ -350,10 +364,11 @@ jobs:
 
   test-reports:
     name: 'Test reports - ${{ matrix.report }}'
-    needs: ['project-jobs', 'project-test-jobs']
+    needs: ['project-jobs', 'project-test-jobs', 'evaluate-project-jobs', 'report-flaky-tests']
     if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || ( needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' && ! github.event.pull_request.head.repo.fork ) ) && needs.project-jobs.outputs.report-jobs != '[]' }}
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         report: ${{ fromJSON( needs.project-jobs.outputs.report-jobs ) }}
     runs-on: ubuntu-latest
@@ -361,8 +376,6 @@ jobs:
       ARTIFACT_NAME: ${{ matrix.report }}-attempt-${{ github.run_attempt }}
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: 'Merge artifacts'
         id: merge-artifacts
         uses: actions/upload-artifact/merge@v4
@@ -409,7 +422,7 @@ jobs:
   report-flaky-tests:
     name: 'Create issues for flaky tests'
     if: ${{ !cancelled() && github.repository == 'woocommerce/woocommerce' && ( github.event_name != 'pull_request' || needs.identify-jobs-to-run.outputs.needs-code-validation == 'true' ) && needs.project-jobs.outputs.test-jobs != '[]' }}
-    needs: ['project-jobs', 'project-test-jobs']
+    needs: ['project-jobs', 'project-test-jobs', 'evaluate-project-jobs', 'alert-on-failure']
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -418,6 +431,9 @@ jobs:
     steps:
       - uses: 'actions/checkout@v4'
         name: 'Checkout'
+        with:
+          sparse-checkout: |
+              .github/actions/report-flaky-tests
 
       - uses: 'actions/download-artifact@v4'
         name: 'Download artifacts'
@@ -471,31 +487,36 @@ jobs:
 
   validate-changelog:
     name: 'Validate changelog'
-    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'trunk' && needs.identify-jobs-to-run.outputs.needs-changelog-validation == 'true' }}
+    if: ${{ !cancelled() && github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'trunk' && needs.identify-jobs-to-run.outputs.needs-changelog-validation == 'true' && ! contains( github.event.pull_request.body, '[x] This Pull Request does not require a changelog' ) }}
     needs: [ 'identify-jobs-to-run' ]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
       - uses: 'actions/checkout@v4'
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: '0'
 
       - uses: './.github/actions/setup-woocommerce-monorepo'
-        with:
-          # The package has majority of composer-deps, therefore referencing it
-          pull-package-composer-deps: '@woocommerce/plugin-woocommerce'
 
       - name: 'Validate - missing entries'
+        id: validate_missing
         env:
-          BASE: ${{ github.event.pull_request.base.sha }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
-        run: php tools/monorepo/check-changelogger-use.php --debug "$BASE" "$HEAD"
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+            passed=$( php tools/monorepo/check-changelogger-use.php --debug --pr-number=${{ github.event.pull_request.number }} | tee -a /dev/stderr | grep 'Passed validation' )
+            echo "passed=${passed/Passed validation: /}" >> $GITHUB_OUTPUT
 
       - name: 'Validate - existing entries'
-        run: composer global require automattic/jetpack-changelogger:3.3.0 --quiet && pnpm --recursive --parallel --stream changelog validate
+        run: |
+            echo "Validating: ${{ steps.validate_missing.outputs.passed }}"
+            filter='';
+            for package in $( echo "${{ steps.validate_missing.outputs.passed }}" | tr -d "[:space:]" | tr "," "\n" ); do
+                filter="$filter --filter $package"
+            done
+            echo "Populated filter: $filter"
+
+            pnpm --parallel --workspace-concurrency=10 --stream $filter changelog validate
 
   validate-markdown:
     name: 'Validate markdown'
