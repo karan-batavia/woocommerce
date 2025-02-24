@@ -21,7 +21,9 @@
 	},
 	"require-dev": {
 		"automattic/jetpack-changelogger": "3.3.0",
-		"phpunit/phpunit": "^9.6"
+		"phpunit/phpunit": "^9.6",
+		"pelago/emogrifier": "^7.3",
+		"yoast/phpunit-polyfills": "^4.0"
 	},
 	"config": {
 		"platform": {
