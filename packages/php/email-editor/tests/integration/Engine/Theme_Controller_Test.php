@@ -11,7 +11,7 @@ namespace MailPoet\EmailEditor\Engine;
 /**
  * Integration test for Theme_Controller class
  */
-class Theme_Controller_Test extends \MailPoetTest {
+class Theme_Controller_Test extends \Email_Editor_Integration_Test_Case {
 	/**
 	 * Theme controller instance
 	 *
@@ -22,8 +22,8 @@ class Theme_Controller_Test extends \MailPoetTest {
 	/**
 	 * Set up before each test
 	 */
-	public function _before() {
-		parent::_before();
+	public function setUp(): void {
+		parent::setUp();
 
 		// Crete a custom user theme post.
 		$styles_data = array(
@@ -56,9 +56,10 @@ class Theme_Controller_Test extends \MailPoetTest {
 	public function testItGetThemeJson(): void {
 		$theme_json     = $this->theme_controller->get_theme();
 		$theme_settings = $theme_json->get_settings();
-		verify( $theme_settings['layout']['contentSize'] )->equals( '660px' ); // from email editor theme.json file.
-		verify( $theme_settings['spacing']['margin'] )->false();
-		verify( $theme_settings['typography']['dropCap'] )->false();
+
+		$this->assertEquals( '660px', $theme_settings['layout']['contentSize'] ); // from email editor theme.json file.
+		$this->assertFalse( $theme_settings['spacing']['margin'] );
+		$this->assertFalse( $theme_settings['typography']['dropCap'] );
 	}
 
 	/**
@@ -67,54 +68,54 @@ class Theme_Controller_Test extends \MailPoetTest {
 	public function testItGeneratesCssStylesForRenderer() {
 		$css = $this->theme_controller->get_stylesheet_for_rendering();
 		// Font families.
-		verify( $css )->stringContainsString( '.has-arial-font-family' );
-		verify( $css )->stringContainsString( '.has-comic-sans-ms-font-family' );
-		verify( $css )->stringContainsString( '.has-courier-new-font-family' );
-		verify( $css )->stringContainsString( '.has-georgia-font-family' );
-		verify( $css )->stringContainsString( '.has-lucida-font-family' );
-		verify( $css )->stringContainsString( '.has-tahoma-font-family' );
-		verify( $css )->stringContainsString( '.has-times-new-roman-font-family' );
-		verify( $css )->stringContainsString( '.has-trebuchet-ms-font-family' );
-		verify( $css )->stringContainsString( '.has-verdana-font-family' );
-		verify( $css )->stringContainsString( '.has-arvo-font-family' );
-		verify( $css )->stringContainsString( '.has-lato-font-family' );
-		verify( $css )->stringContainsString( '.has-merriweather-font-family' );
-		verify( $css )->stringContainsString( '.has-merriweather-sans-font-family' );
-		verify( $css )->stringContainsString( '.has-noticia-text-font-family' );
-		verify( $css )->stringContainsString( '.has-open-sans-font-family' );
-		verify( $css )->stringContainsString( '.has-playfair-display-font-family' );
-		verify( $css )->stringContainsString( '.has-roboto-font-family' );
-		verify( $css )->stringContainsString( '.has-source-sans-pro-font-family' );
-		verify( $css )->stringContainsString( '.has-oswald-font-family' );
-		verify( $css )->stringContainsString( '.has-raleway-font-family' );
-		verify( $css )->stringContainsString( '.has-permanent-marker-font-family' );
-		verify( $css )->stringContainsString( '.has-pacifico-font-family' );
+		$this->assertStringContainsString( '.has-arial-font-family', $css );
+		$this->assertStringContainsString( '.has-comic-sans-ms-font-family', $css );
+		$this->assertStringContainsString( '.has-courier-new-font-family', $css );
+		$this->assertStringContainsString( '.has-georgia-font-family', $css );
+		$this->assertStringContainsString( '.has-lucida-font-family', $css );
+		$this->assertStringContainsString( '.has-tahoma-font-family', $css );
+		$this->assertStringContainsString( '.has-times-new-roman-font-family', $css );
+		$this->assertStringContainsString( '.has-trebuchet-ms-font-family', $css );
+		$this->assertStringContainsString( '.has-verdana-font-family', $css );
+		$this->assertStringContainsString( '.has-arvo-font-family', $css );
+		$this->assertStringContainsString( '.has-lato-font-family', $css );
+		$this->assertStringContainsString( '.has-merriweather-font-family', $css );
+		$this->assertStringContainsString( '.has-merriweather-sans-font-family', $css );
+		$this->assertStringContainsString( '.has-noticia-text-font-family', $css );
+		$this->assertStringContainsString( '.has-open-sans-font-family', $css );
+		$this->assertStringContainsString( '.has-playfair-display-font-family', $css );
+		$this->assertStringContainsString( '.has-roboto-font-family', $css );
+		$this->assertStringContainsString( '.has-source-sans-pro-font-family', $css );
+		$this->assertStringContainsString( '.has-oswald-font-family', $css );
+		$this->assertStringContainsString( '.has-raleway-font-family', $css );
+		$this->assertStringContainsString( '.has-permanent-marker-font-family', $css );
+		$this->assertStringContainsString( '.has-pacifico-font-family', $css );
 
-		verify( $css )->stringContainsString( '.has-small-font-size' );
-		verify( $css )->stringContainsString( '.has-medium-font-size' );
-		verify( $css )->stringContainsString( '.has-large-font-size' );
-		verify( $css )->stringContainsString( '.has-x-large-font-size' );
+		$this->assertStringContainsString( '.has-small-font-size', $css );
+		$this->assertStringContainsString( '.has-medium-font-size', $css );
+		$this->assertStringContainsString( '.has-large-font-size', $css );
+		$this->assertStringContainsString( '.has-x-large-font-size', $css );
 
 		// Font sizes.
-		verify( $css )->stringContainsString( '.has-small-font-size' );
-		verify( $css )->stringContainsString( '.has-medium-font-size' );
-		verify( $css )->stringContainsString( '.has-large-font-size' );
-		verify( $css )->stringContainsString( '.has-x-large-font-size' );
+		$this->assertStringContainsString( '.has-small-font-size', $css );
+		$this->assertStringContainsString( '.has-medium-font-size', $css );
+		$this->assertStringContainsString( '.has-large-font-size', $css );
+		$this->assertStringContainsString( '.has-x-large-font-size', $css );
 
 		// Colors.
-		verify( $css )->stringContainsString( '.has-black-color' );
-		verify( $css )->stringContainsString( '.has-black-background-color' );
-		verify( $css )->stringContainsString( '.has-black-border-color' );
+		$this->assertStringContainsString( '.has-black-color', $css );
+		$this->assertStringContainsString( '.has-black-background-color', $css );
+		$this->assertStringContainsString( '.has-black-border-color', $css );
 
-		verify( $css )->stringContainsString( '.has-black-color' );
-		verify( $css )->stringContainsString( '.has-black-background-color' );
-		verify( $css )->stringContainsString( '.has-black-border-color' );
+		$this->assertStringContainsString( '.has-black-color', $css );
+		$this->assertStringContainsString( '.has-black-background-color', $css );
+		$this->assertStringContainsString( '.has-black-border-color', $css );
 
 		$this->checkCorrectThemeConfiguration();
 		if ( wp_get_theme()->get( 'Name' ) === 'Twenty Twenty-One' ) {
-			verify( $css )->stringContainsString( '.has-yellow-background-color' );
-			verify( $css )->stringContainsString( '.has-yellow-color' );
-			verify( $css )->stringContainsString( '.has-yellow-border-color' );
+			$this->assertStringContainsString( '.has-yellow-background-color', $css );
+			$this->assertStringContainsString( '.has-yellow-color', $css );
+			$this->assertStringContainsString( '.has-yellow-border-color', $css );
 		}
 	}
 
@@ -122,24 +123,24 @@ class Theme_Controller_Test extends \MailPoetTest {
 	 * Test if the theme controller translates font size slug to font size value
 	 */
 	public function testItCanTranslateFontSizeSlug() {
-		verify( $this->theme_controller->translate_slug_to_font_size( 'small' ) )->equals( '13px' );
-		verify( $this->theme_controller->translate_slug_to_font_size( 'medium' ) )->equals( '16px' );
-		verify( $this->theme_controller->translate_slug_to_font_size( 'large' ) )->equals( '28px' );
-		verify( $this->theme_controller->translate_slug_to_font_size( 'x-large' ) )->equals( '42px' );
-		verify( $this->theme_controller->translate_slug_to_font_size( 'unknown' ) )->equals( 'unknown' );
+		$this->assertEquals( '13px', $this->theme_controller->translate_slug_to_font_size( 'small' ) );
+		$this->assertEquals( '16px', $this->theme_controller->translate_slug_to_font_size( 'medium' ) );
+		$this->assertEquals( '28px', $this->theme_controller->translate_slug_to_font_size( 'large' ) );
+		$this->assertEquals( '42px', $this->theme_controller->translate_slug_to_font_size( 'x-large' ) );
+		$this->assertEquals( 'unknown', $this->theme_controller->translate_slug_to_font_size( 'unknown' ) );
 	}
 
 	/**
 	 * Test if the theme controller translates font family slug to font family name
 	 */
 	public function testItCanTranslateColorSlug() {
-		verify( $this->theme_controller->translate_slug_to_color( 'black' ) )->equals( '#000000' );
-		verify( $this->theme_controller->translate_slug_to_color( 'white' ) )->equals( '#ffffff' );
-		verify( $this->theme_controller->translate_slug_to_color( 'cyan-bluish-gray' ) )->equals( '#abb8c3' );
-		verify( $this->theme_controller->translate_slug_to_color( 'pale-pink' ) )->equals( '#f78da7' );
+		$this->assertEquals( '#000000', $this->theme_controller->translate_slug_to_color( 'black' ) );
+		$this->assertEquals( '#ffffff', $this->theme_controller->translate_slug_to_color( 'white' ) );
+		$this->assertEquals( '#abb8c3', $this->theme_controller->translate_slug_to_color( 'cyan-bluish-gray' ) );
+		$this->assertEquals( '#f78da7', $this->theme_controller->translate_slug_to_color( 'pale-pink' ) );
 		$this->checkCorrectThemeConfiguration();
 		if ( wp_get_theme()->get( 'Name' ) === 'Twenty Twenty-One' ) {
-			verify( $this->theme_controller->translate_slug_to_color( 'yellow' ) )->equals( '#eeeadd' );
+			$this->assertEquals( '#eeeadd', $this->theme_controller->translate_slug_to_color( 'yellow' ) );
 		}
 	}
 
@@ -148,8 +149,8 @@ class Theme_Controller_Test extends \MailPoetTest {
 	 */
 	public function testItLoadsCustomUserTheme() {
 		$theme = $this->theme_controller->get_theme();
-		verify( $theme->get_raw_data()['styles']['color']['background'] )->equals( '#123456' );
-		verify( $theme->get_raw_data()['styles']['color']['text'] )->equals( '#654321' );
+		$this->assertEquals( '#123456', $theme->get_raw_data()['styles']['color']['background'] );
+		$this->assertEquals( '#654321', $theme->get_raw_data()['styles']['color']['text'] );
 	}
 
 	/**
@@ -158,8 +159,8 @@ class Theme_Controller_Test extends \MailPoetTest {
 	public function testItAddCustomUserThemeToStyles() {
 		$theme  = $this->theme_controller->get_theme();
 		$styles = $theme->get_stylesheet();
-		verify( $styles )->stringContainsString( 'color: #654321' );
-		verify( $styles )->stringContainsString( 'background-color: #123456' );
+		$this->assertStringContainsString( 'color: #654321', $styles );
+		$this->assertStringContainsString( 'background-color: #123456', $styles );
 	}
 
 	/**
@@ -167,8 +168,8 @@ class Theme_Controller_Test extends \MailPoetTest {
 	 */
 	public function testGetBaseThemeDoesNotIncludeUserThemeData() {
 		$theme = $this->theme_controller->get_base_theme();
-		verify( $theme->get_raw_data()['styles']['color']['background'] )->equals( '#ffffff' );
-		verify( $theme->get_raw_data()['styles']['color']['text'] )->equals( '#1e1e1e' );
+		$this->assertEquals( '#ffffff', $theme->get_raw_data()['styles']['color']['background'] );
+		$this->assertEquals( '#1e1e1e', $theme->get_raw_data()['styles']['color']['text'] );
 	}
 
 	/**
@@ -178,7 +179,7 @@ class Theme_Controller_Test extends \MailPoetTest {
 		$this->checkCorrectThemeConfiguration();
 		$settings = $this->theme_controller->get_settings();
 		if ( wp_get_theme()->get( 'Name' ) === 'Twenty Twenty-One' ) {
-			verify( $settings['color']['palette']['theme'] )->notEmpty();
+			$this->assertNotEmpty( $settings['color']['palette']['theme'] );
 		}
 	}
 
@@ -187,8 +188,8 @@ class Theme_Controller_Test extends \MailPoetTest {
 	 */
 	public function testItReturnsCorrectPresetVariablesMap() {
 		$variable_map = $this->theme_controller->get_variables_values_map();
-		verify( $variable_map['--wp--preset--color--black'] )->equals( '#000000' );
-		verify( $variable_map['--wp--preset--spacing--20'] )->equals( '20px' );
+		$this->assertSame( '#000000', $variable_map['--wp--preset--color--black'] );
+		$this->assertSame( '20px', $variable_map['--wp--preset--spacing--20'] );
 	}
 
 	/**
