@@ -33,18 +33,15 @@
 
 #mailpoet-email-editor {
 
-	/* stylelint-disable-next-line selector-class-pattern */
 	.editor-header__toolbar {
 		flex-grow: 1;
 	}
 
-	/* stylelint-disable-next-line selector-class-pattern */
 	.editor-header__center {
 		flex-grow: 3;
 	}
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .visual-editor__email_content_wrapper {
 	display: flex;
 	height: 100%;
@@ -71,7 +68,6 @@
 // Styles are based on the Block Card component from Gutenberg block editor
 .mailpoet-email-sidebar-email-type-info {
 
-	/* stylelint-disable-next-line selector-class-pattern */
 	.components-panel__row {
 		align-items: flex-start;
 	}
@@ -139,7 +135,6 @@
 		}
 	}
 
-	/* stylelint-disable-next-line selector-class-pattern */
 	.mailpoet-settings-panel-subject .components-base-control__label {
 		width: 100%;
 
@@ -156,7 +151,6 @@
 		}
 	}
 
-	/* stylelint-disable-next-line selector-class-pattern */
 	.mailpoet-settings-panel-preview-text .components-base-control__label {
 		width: 100%;
 	}
@@ -187,7 +181,6 @@
 	word-spacing: normal;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .visual-editor__email_layout_wrapper {
 	height: 100%;
 	margin: 0 auto;
@@ -197,7 +190,6 @@
 
 // Hide the advanced settings in the sidebar.
 // This panel is not used in the email editor at this moment.
-/* stylelint-disable-next-line selector-class-pattern */
 .block-editor-block-inspector__advanced {
 	display: none;
 }

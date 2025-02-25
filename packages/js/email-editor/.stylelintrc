@@ -1,4 +1,7 @@
 {
 	"extends": "@wordpress/stylelint-config",
-	"customSyntax": "postcss-scss"
+	"customSyntax": "postcss-scss",
+	"rules": {
+		"selector-class-pattern": null
+	}
 }
